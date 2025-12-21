@@ -1,0 +1,98 @@
+﻿@{
+    var ImageBasePath = "https://sahosoftweb.com/Images/Ecomm/";
+}
+
+@model List<ProductViewModel>
+@foreach (var product in Model)
+{
+    <div class="col-lg-2 col-6 col-grid-box">
+    <div class="product-box">
+        <div class="img-wrapper">
+            <div class="front">
+                <a href="@Url.Action("ProductDetails", "Product", new { category = product.Category, id = product.Id })">
+                    <img src="@($"{@ImageBasePath}{@product.Pictures.FirstOrDefault() ?? "default.jpg"}")"
+                         class="img-fluid blur-up lazyload bg-img" alt="@product.Name">
+                </a>
+            </div>
+            <div class="back">
+                <a href="@Url.Action("ProductDetails", "Product", new { category = product.Category, id = product.Id })">
+                    <img src="@($"{@ImageBasePath}{@product.Pictures.LastOrDefault() ?? "default.jpg"}")"
+                    class="img-fluid blur-up lazyload bg-img" alt="@product.Name">
+                </a>
+            </div>
+            <div class="cart-info cart-wrap" style="background: rgba(0,0,0,0.2);">
+                <form asp-action="AddToWishlist" asp-controller="Wishlist" method="post">
+                    <input type="hidden" name="Id" value="@product.Id" />
+                    <input type="hidden" name="Name" value="@product.Name" />
+                    <input type="hidden" name="SalePrice" value="@product.SalePrice" />
+                    <input type="hidden" name="Price" value="@product.Price" />
+                    <input type="hidden" name="Pictures" value="@product.Pictures.FirstOrDefault()" />
+                    <input type="hidden" name="ShortDetails" value="@product.ShortDetails" />
+                    <input type="hidden" name="Stock" value="@product.Stock" />
+                        <input type="hidden" name="Colors" value="@product.Colors.FirstOrDefault()" />
+                    <input type="hidden" name="Size" value="@product.Size.FirstOrDefault()" />
+                    <input type="hidden" name="Category" value="@product.Category" />
+
+                  @*   <a title="Add to Wishlist" tabindex="0">
+                        <i class="fa fa-heart"
+                           aria-hidden="true"></i>
+                    </a> *@
+                    <button type="submit" class="btn btn-sm"> <i class="fa fa-heart" aria-hidden="true"></i></button>
+                </form>
+               
+                <a title="View Details" href="@Url.Action("ProductDetails", "Product", new { category = product.Category, id = product.Id })"
+                   tabindex="0"><i class="fa fa-search" aria-hidden="true"></i></a>
+
+
+
+                <form asp-action="AddToCompare" asp-controller="Compare" method="post">
+                    <input type="hidden" name="Id" value="@product.Id" />
+                    <input type="hidden" name="Name" value="@product.Name" />
+                    <input type="hidden" name="SalePrice" value="@product.SalePrice" />
+                    <input type="hidden" name="Price" value="@product.Price" />
+                    <input type="hidden" name="Pictures" value="@product.Pictures.FirstOrDefault()" />
+                    <input type="hidden" name="ShortDetails" value="@product.ShortDetails" />
+                    <input type="hidden" name="Stock" value="@product.Stock" />
+                        <input type="hidden" name="Colors" value="@product.Colors.FirstOrDefault()" />
+                    <input type="hidden" name="Size" value="@product.Size.FirstOrDefault()" />
+                    <input type="hidden" name="Category" value="@product.Category" />
+
+                    @*   <a title="Compare" tabindex="0" href="compare.html">
+                        <i class="fa fa-refresh"
+                           aria-hidden="true"></i>
+                    </a> *@
+                    <button type="submit" class="btn btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                </form>
+            </div>
+        </div>
+        <div class="product-detail">
+            <div>
+                <br>
+                <a tabindex="0">
+                    <h6> @product.Name</h6>
+                </a>
+                <h4> ₹@product.SalePrice <del><span class="money">₹@product.Price </span></del></h4>
+                <div class="add-btn">
+                    <form asp-action="AddToCart" asp-controller="Cart" method="post">
+                        <input type="hidden" name="Id" value="@product.Id" />
+                        <input type="hidden" name="Name" value="@product.Name" />
+                        <input type="hidden" name="SalePrice" value="@product.SalePrice" />
+                        <input type="hidden" name="Price" value="@product.Price" />
+                        <input type="hidden" name="Pictures" value="@product.Pictures.FirstOrDefault()" />
+                        <input type="hidden" name="ShortDetails" value="@product.ShortDetails" />
+                        <input type="hidden" name="Stock" value="@product.Stock" />
+                            <input type="hidden" name="Colors" value="@product.Colors.FirstOrDefault()" />
+                        <input type="hidden" name="Size" value="@product.Size.FirstOrDefault()" />
+                        <input type="hidden" name="Category" value="@product.Category" />
+
+                        @*  <a class="text-warning text-uppercase" tabindex="0">
+                            <i class="fa fa-shopping-cart" aria-hidden="true"></i> add to cart
+                        </a> *@
+                        <button type="submit" class="btn btn-sm text-warning text-uppercase"><i class="fa fa-shopping-cart" aria-hidden="true"></i> add to cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+}

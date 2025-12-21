@@ -1,0 +1,495 @@
+﻿@using eCommerceWeb.Models.Response
+
+@{
+    ViewData["Title"] = "OrderDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var imagePath = "https://www.sahosoftweb.com/Images/Ecomm/";
+}
+@model List<GetAll_CustomerOrderDetails_Response>
+@section Styles {
+    <style>
+        @@media (min-width: 48em) {
+            .wrapper
+
+        {
+            max-width: 1500px;
+        }
+
+        }
+
+        .stepper {
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        @@media (min-width: 48em) {
+            .stepper
+
+        {
+            padding: 20px;
+        }
+
+        }
+
+        .stepper__list {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        @@media (min-width: 48em) {
+            .stepper__list
+
+        {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        }
+
+        .stepper__list__item {
+            padding: 3px 5px;
+            text-align: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        @@media (min-width: 48em) {
+            .stepper__list__item
+
+        {
+            padding: 10px;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        }
+
+        .stepper__list__item:after {
+            content: "";
+            display: block;
+            position: absolute;
+            z-index: 2;
+        }
+
+        @@media (min-width: 48em) {
+            .stepper__list__item:after
+
+        {
+            width: calc(100% - 100px);
+            top: 28%;
+            left: calc(50% + 50px);
+            border-top: 2px dotted #E2DFDA;
+        }
+
+        }
+
+        .stepper__list__item--done {
+            color: #178A00;
+            transition: all 0.1s;
+        }
+
+        @@media (min-width: 48em) {
+            .stepper__list__item--done:after
+
+        {
+            border-top-style: solid;
+            border-top-width: 1px;
+        }
+
+        }
+
+        .stepper__list__item--done:hover,
+        .stepper__list__item--done:focus {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .stepper__list__item--current {
+            color: #006DFF;
+        }
+
+            .stepper__list__item--current:last-of-type:after,
+            .stepper__list__item--current:only-of-type:after {
+                height: 30%;
+            }
+
+        .stepper__list__item:last-of-type:after {
+            display: none;
+        }
+
+        .stepper__list__item--pending {
+            color: #807370;
+        }
+
+            .stepper__list__item--pending:after {
+                height: 30%;
+            }
+
+        .stepper__list__title {
+            margin: 1px 0 0;
+        }
+
+        @@media (min-width: 48em) {
+            .stepper__list__title
+
+        {
+            margin: 0;
+        }
+
+        }
+
+        .stepper__list__icon {
+            margin: 0 10px 0 0;
+            height: 2em;
+            width: 2em;
+        }
+
+        @@media (min-width: 48em) {
+            .stepper__list__icon
+
+        {
+            margin: 0 0 15px;
+        }
+
+        }
+
+        .stepper__list__icon path {
+            fill: currentColor;
+        }
+
+        .stepper__list__icon ellipse,
+        .stepper__list__icon circle {
+            stroke: currentColor;
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-12">
+
+            <!-- Back to Orders -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <a class="text-success-emphasis fs-6" href="javascript:history.back()">
+                        <i class="fa fa-angle-left me-3" aria-hidden="true"></i>
+                        Back To My Orders
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Left Column -->
+                <div class="col-lg-8 col-12">
+                    <!-- Order Info -->
+                    @foreach (var prod in Model)
+                    {
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <p>
+                                    <small class="text-secondary">ORDER#<strong>@prod.OrderId</strong></small>
+                                </p>
+                                <p class="fw-bold"><small>ORDER PLACED @prod.OrderDate</small></p>
+                            </div>
+
+                            <!-- Product Card -->
+
+                            <div class="card p-3">
+                                <div class="row g-0">
+                                    <div class="col-lg-4 col-12">
+                                        <img src="@($"{imagePath}{prod.PicturePath}")"
+                                             alt="@prod.ProductName"
+                                        class="img-fluid"
+                                        style="max-width: 300px; height: 250px; object-fit: cover;" />
+                                    </div>
+                                    <div class="col">
+                                        <div class="row mb-5">
+                                            <div class="col-12">
+                                                <div class="card-body p-lg-4 ps-lg-5">
+                                                    <h5 class="card-title">@prod.ProductName</h5>
+                                                    <p class="card-text">@prod.ShortDetails</p>
+                                                    @if (prod.OrderStatusId == 4)
+                                                    {
+                                                        <p class="card-text">
+                                                            <small class="text-muted">
+                                                                <i class="text-warning fa fa-calendar-o me-1" aria-hidden="true"></i>
+                                                                @prod.CancelDate
+                                                            </small>
+                                                        </p>
+                                                        <a class="text-danger p-2 text-uppercase"
+                                                           style="background-color: #edc9c8; font-size: 0.8rem;">@prod.OrderStatus</a>
+                                                    } else @if(prod.OrderStatusId == 3)
+                                                    {
+                                                        <p class="card-text">
+                                                            <small class="text-muted">
+                                                                <i class="text-warning fa fa-calendar-o me-1"
+                                                                   aria-hidden="true"></i>@prod.OrderDate
+                                                            </small>
+                                                        </p>
+                                                        <a class="text-dark p-2 text-uppercase"
+                                                           style="background-color: #eaedc8; font-size: 0.8rem;">@prod.OrderStatus</a>
+                                                    } else @if(prod.OrderStatusId == 2)
+                                                    {
+                                                        <p class="card-text">
+                                                            <small class="text-muted">
+                                                                <i class="text-success fa fa-calendar-o me-1"
+                                                                   aria-hidden="true"></i>@prod.ShippedOn
+                                                            </small>
+                                                        </p>
+                                                        <a class="text-success p-2 text-uppercase"
+                                                           style="background-color: #c9edc8; font-size: 0.8rem;">@prod.OrderStatus</a>
+                                                    } else @if(prod.OrderStatusId == 1)
+                                                    {
+                                                        <p class="card-text">
+                                                            <small class="text-muted">
+                                                                <i class="text-success fa fa-calendar-o me-1"
+                                                                   aria-hidden="true"></i>@prod.DeliveredOn 
+                                                            </small>
+                                                        </p>
+                                                        <a class="text-success p-2 text-uppercase"
+                                                           style="background-color: #c9edc8; font-size: 0.8rem;">@prod.OrderStatus</a>
+                                                    }
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Stepper -->
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="wrapper">
+                                                    <nav class="stepper">
+                                                        <ul class="stepper__list">
+                                                            @if (@prod.OrderStatusId != 4)
+                                                            {
+                                                                @if (@prod.OrderStatusId == 3)
+                                                                {
+                                                                    <li class="stepper__list__item stepper__list__item--current">
+                                                                        <svg class="stepper__list__icon stepper__list__icon--current"
+                                                                             width="24" height="24" viewbox="0 0 24 24">
+                                                                            <path d="M12.2 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0 1.377a9.377 9.377 0 1 1 0-18.754 9.377 9.377 0 0 1 0 18.754zm-4-8a1.377 1.377 0 1 1 0-2.754 1.377 1.377 0 0 1 0 2.754zm4 0a1.377 1.377 0 1 1 0-2.754 1.377 1.377 0 0 1 0 2.754zm4 0a1.377 1.377 0 1 1 0-2.754 1.377 1.377 0 0 1 0 2.754z"
+                                                                                  fill="#006DFF" fill-rule="evenodd"></path>
+                                                                        </svg><span class="stepper__list__title">Processing</span>
+                                                                    </li>
+                                                                    <li class="stepper__list__item stepper__list__item--pending">
+                                                                        <svg class="stepper__list__icon stepper__list__icon--current"
+                                                                             width="24" height="24" viewbox="0 0 24 24">
+                                                                            <path d="M12 16.1c1.8 0 3.3-1.4 3.3-3.2 0-1.8-1.5-3.2-3.3-3.2s-3.3 1.4-3.3 3.2c0 1.7 1.5 3.2 3.3 3.2zm0 1.7c-2.8 0-5-2.2-5-4.9S9.2 8 12 8s5 2.2 5 4.9-2.2 4.9-5 4.9z">
+                                                                            </path>
+                                                                        </svg><span class="stepper__list__title">Shipped</span>
+                                                                    </li>
+                                                                    <li class="stepper__list__item stepper__list__item--pending">
+                                                                        <svg class="stepper__list__icon stepper__list__icon--current"
+                                                                             width="24" height="24" viewbox="0 0 24 24">
+                                                                            <path d="M12 16.1c1.8 0 3.3-1.4 3.3-3.2 0-1.8-1.5-3.2-3.3-3.2s-3.3 1.4-3.3 3.2c0 1.7 1.5 3.2 3.3 3.2zm0 1.7c-2.8 0-5-2.2-5-4.9S9.2 8 12 8s5 2.2 5 4.9-2.2 4.9-5 4.9z">
+                                                                            </path>
+                                                                        </svg><span class="stepper__list__title">Delivered</span>
+                                                                    </li>
+                                                                } 
+                                                                else if(@prod.OrderStatusId == 2)
+                                                                {
+                                                                    <li class="stepper__list__item stepper__list__item--done">
+                                                                        <svg class="stepper__list__icon" viewbox="0 0 24 24">
+                                                                            <path class="st0"
+                                                                                  d="M12 20c4.4 0 8-3.6 8-8s-3.6-8-8-8-8 3.6-8 8 3.6 8 8 8zm0 1.5c-5.2 0-9.5-4.3-9.5-9.5S6.8 2.5 12 2.5s9.5 4.3 9.5 9.5-4.3 9.5-9.5 9.5z">
+                                                                            </path>
+                                                                            <path class="st0"
+                                                                                  d="M11.1 12.9l-1.2-1.1c-.4-.3-.9-.3-1.3 0-.3.3-.4.8-.1 1.1l.1.1 1.8 1.6c.1.1.4.3.7.3.2 0 .5-.1.7-.3l3.6-4.1c.3-.3.4-.8.1-1.1l-.1-.1c-.4-.3-1-.3-1.3 0l-3 3.6z">
+                                                                            </path>
+                                                                        </svg><span class="stepper__list__title">Processing</span>
+                                                                    </li>
+                                                                    <li class="stepper__list__item stepper__list__item--done">
+                                                                        <svg class="stepper__list__icon" viewbox="0 0 24 24">
+                                                                            <path class="st0"
+                                                                                  d="M12 20c4.4 0 8-3.6 8-8s-3.6-8-8-8-8 3.6-8 8 3.6 8 8 8zm0 1.5c-5.2 0-9.5-4.3-9.5-9.5S6.8 2.5 12 2.5s9.5 4.3 9.5 9.5-4.3 9.5-9.5 9.5z">
+                                                                            </path>
+                                                                            <path class="st0"
+                                                                                  d="M11.1 12.9l-1.2-1.1c-.4-.3-.9-.3-1.3 0-.3.3-.4.8-.1 1.1l.1.1 1.8 1.6c.1.1.4.3.7.3.2 0 .5-.1.7-.3l3.6-4.1c.3-.3.4-.8.1-1.1l-.1-.1c-.4-.3-1-.3-1.3 0l-3 3.6z">
+                                                                            </path>
+                                                                        </svg><span class="stepper__list__title">Shipped</span>
+                                                                    </li>
+                                                                    <li class="stepper__list__item stepper__list__item--current">
+                                                                        <svg class="stepper__list__icon stepper__list__icon--current"
+                                                                             width="24" height="24" viewbox="0 0 24 24">
+                                                                            <path d="M12.2 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0 1.377a9.377 9.377 0 1 1 0-18.754 9.377 9.377 0 0 1 0 18.754zm-4-8a1.377 1.377 0 1 1 0-2.754 1.377 1.377 0 0 1 0 2.754zm4 0a1.377 1.377 0 1 1 0-2.754 1.377 1.377 0 0 1 0 2.754zm4 0a1.377 1.377 0 1 1 0-2.754 1.377 1.377 0 0 1 0 2.754z"
+                                                                                  fill="#006DFF" fill-rule="evenodd"></path>
+                                                                        </svg><span class="stepper__list__title">Delivered</span>
+                                                                    </li>
+                                                                }
+                                                                else if (@prod.OrderStatusId == 1)
+                                                                {
+                                                                    <li class="stepper__list__item stepper__list__item--done">
+                                                                        <svg class="stepper__list__icon" viewbox="0 0 24 24">
+                                                                            <path class="st0"
+                                                                                  d="M12 20c4.4 0 8-3.6 8-8s-3.6-8-8-8-8 3.6-8 8 3.6 8 8 8zm0 1.5c-5.2 0-9.5-4.3-9.5-9.5S6.8 2.5 12 2.5s9.5 4.3 9.5 9.5-4.3 9.5-9.5 9.5z">
+                                                                            </path>
+                                                                            <path class="st0"
+                                                                                  d="M11.1 12.9l-1.2-1.1c-.4-.3-.9-.3-1.3 0-.3.3-.4.8-.1 1.1l.1.1 1.8 1.6c.1.1.4.3.7.3.2 0 .5-.1.7-.3l3.6-4.1c.3-.3.4-.8.1-1.1l-.1-.1c-.4-.3-1-.3-1.3 0l-3 3.6z">
+                                                                            </path>
+                                                                        </svg><span class="stepper__list__title">Processing</span>
+                                                                    </li>
+                                                                    <li class="stepper__list__item stepper__list__item--done">
+                                                                        <svg class="stepper__list__icon" viewbox="0 0 24 24">
+                                                                            <path class="st0"
+                                                                                  d="M12 20c4.4 0 8-3.6 8-8s-3.6-8-8-8-8 3.6-8 8 3.6 8 8 8zm0 1.5c-5.2 0-9.5-4.3-9.5-9.5S6.8 2.5 12 2.5s9.5 4.3 9.5 9.5-4.3 9.5-9.5 9.5z">
+                                                                            </path>
+                                                                            <path class="st0"
+                                                                                  d="M11.1 12.9l-1.2-1.1c-.4-.3-.9-.3-1.3 0-.3.3-.4.8-.1 1.1l.1.1 1.8 1.6c.1.1.4.3.7.3.2 0 .5-.1.7-.3l3.6-4.1c.3-.3.4-.8.1-1.1l-.1-.1c-.4-.3-1-.3-1.3 0l-3 3.6z">
+                                                                            </path>
+                                                                        </svg><span class="stepper__list__title">Shipped</span>
+                                                                    </li>
+                                                                    <li class="stepper__list__item stepper__list__item--done">
+                                                                        <svg class="stepper__list__icon" viewbox="0 0 24 24">
+                                                                            <path class="st0"
+                                                                                  d="M12 20c4.4 0 8-3.6 8-8s-3.6-8-8-8-8 3.6-8 8 3.6 8 8 8zm0 1.5c-5.2 0-9.5-4.3-9.5-9.5S6.8 2.5 12 2.5s9.5 4.3 9.5 9.5-4.3 9.5-9.5 9.5z">
+                                                                            </path>
+                                                                            <path class="st0"
+                                                                                  d="M11.1 12.9l-1.2-1.1c-.4-.3-.9-.3-1.3 0-.3.3-.4.8-.1 1.1l.1.1 1.8 1.6c.1.1.4.3.7.3.2 0 .5-.1.7-.3l3.6-4.1c.3-.3.4-.8.1-1.1l-.1-.1c-.4-.3-1-.3-1.3 0l-3 3.6z">
+                                                                            </path>
+                                                                        </svg><span class="stepper__list__title">Delivered</span>
+                                                                    </li>
+
+                                                                }
+
+                                                            }
+                                                            
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                    <!-- Delivery Address -->
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p><span class="border border-warning text-danger p-1 rounded-1 text-uppercase" style="font-size: 0.7rem;">Home</span></p>
+                            <p class="text-dark fw-bold">@Model[0].CustomerName | @Model[0].Phone</p>
+                            <p class="card-text">@Model[0].Address, @Model[0].City, @Model[0].State, @Model[0].Country </p>
+                        </div>
+                    </div>
+
+                    <!-- Help -->
+                    @if (@Model[0].OrderStatusId == 2 || @Model[0].OrderStatusId == 3)
+                    {
+                        <div class="card mb-5">
+                            <div class="card-body">
+                                <p class="text-uppercase fw-bold mb-4">NEED HELP WITH YOUR ORDER?</p>
+                                <button class="btn btn-solid border-0" onclick="cancelOrder(@Model[0].BillId)">Cancel Product</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Right Column: Summary -->
+                <div class="col-lg-4 col-12">
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <p class="text-uppercase fw-bold mb-4">Shopping Details</p>
+                            <div class="d-flex justify-content-between">
+                                <p class="text-dark fw-bold">@Model[0].CustomerName</p>
+                                <p>
+                                    <span class="bg-light text-dark p-1 rounded-1 text-uppercase fw-bold" style="font-size: 0.7rem;">Home</span>
+                                </p>
+                            </div>
+                            <p class="card-text">
+                                @Model[0].Address, @Model[0].City, @Model[0].State, @Model[0].Country
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <p class="text-uppercase fw-bold mb-4">Payment Summary</p>
+                            <div class="d-flex justify-content-between">
+                                <p>Cart Total</p>
+                                <p><span>₹</span>@Model[0].Amount</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <p>Delivery Fee</p>
+                                <p>Free</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <p>Order Total</p>
+                                <p><span>₹</span>@Model[0].Amount</p>
+                            </div>
+                            <hr />
+                            <div class="d-flex justify-content-between">
+                                <h6 class="fw-bold">Amount Paid</h6>
+                                <h6 class="fw-bold"><span>₹</span>@Model[0].Amount</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- End Row -->
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function cancelOrder(billId) {
+        Swal.fire({
+            title: 'Cancel Order',
+            input: 'textarea',
+            inputLabel: 'Reason for cancellation',
+            inputPlaceholder: 'Type your reason here...',
+            inputAttributes: {
+                'aria-label': 'Type your reason here'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Cancel Order',
+            preConfirm: (reason) => {
+                if (!reason) {
+                    Swal.showValidationMessage('Cancellation reason is required');
+                    return false;
+                }
+
+                const obj = {
+                    billId: billId,
+                    cancelReason: reason
+                };
+
+                return fetch('/home/order/cancel-order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(obj)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) {
+                        throw new Error(data.message || 'Cancellation failed');
+                    }
+                    return data;
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(`Error: ${error.message}`);
+                });
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Order Cancelled!',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    // Reload the page or hit server again to get updated data
+                    location.reload(); // Or update DOM manually via AJAX
+                });
+            }
+        });
+    }
+</script>

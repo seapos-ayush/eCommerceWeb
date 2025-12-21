@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+@model LoginRequest
+
+<section class="py-lg-5 py-0">
+    <div class="container-fluid h-custom">
+        <div class="row d-flex justify-content-center align-items-center">
+
+            <!-- Left Side Image and Welcome Message -->
+            <div class="col-md-9 col-lg-6 col-xl-5 d-lg-block d-none">
+                <div>
+                    <p class="py-3 fs-3 fw-bold text-dark">
+                        Welcome to the world of Shahosoft Mall®!
+                    </p>
+                </div>
+                <img src="@Url.Content("~/assets/images/login_bg.png")" alt="Sample image" class="img-fluid">
+            </div>
+
+            <!-- Right Side Form -->
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1 p-4 rounded-2" style="box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;">
+                <form novalidate autocomplete="off" class="needs-validation" asp-action="SubmitLogin" asp-controller="Account" method="post">
+
+                    <!-- Sign In Header -->
+                    <div class="mb-4 text-center">
+                        <p class="lead fw-bold mb-0 me-3 fs-2 text-dark">Customer Login</p>
+                        <p class="py-3 fs-6">
+                            For Latest trends, exciting offers and everything Shahosoft®!
+                        </p>
+                    </div>
+
+                    <!-- Email Input -->
+                    <div class="form-outline mb-4">
+                        <label asp-for="UserName" class="form-label fw-bold">Email address</label>
+                        <input type="email"
+                               asp-for="UserName"
+                               placeholder="Enter a valid email address"
+                               autocomplete="off"
+                               class="form-control"
+                               required />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="form-outline mb-3">
+                        <label class="form-label fw-bold"  asp-for="Password" >Password</label>
+                        <input type="password"
+                            asp-for="Password"
+                               placeholder="Enter password"
+                               class="form-control"
+                               required />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <!-- Login Button and Links -->
+                    <div class="text-center text-lg-start mt-4 pt-2 d-flex justify-content-center">
+                        <div class="text-center">
+                            <div class="mb-2">
+                                <button type="submit" class="btn btn-solid p-2 px-5">Login</button>
+                            </div>
+                            <div>
+                                <a href="@Url.Action("VendorLogin","Account")" class="link-primary text-decoration-underline">Vendor Login</a>
+                            </div>
+                            <div>
+                                <p class="small fw-bold mt-2 pt-1 mb-0">
+                                    Don't have an account?
+                                    <a href="@Url.Action("Registration", "Account")" class="link-danger">Register</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script>
+        (function () {
+      'use strict'
+
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.querySelectorAll('.needs-validation')
+
+      // Loop over them and prevent submission
+      Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+
+            form.classList.add('was-validated')
+          }, false)
+        })
+    })()
+</script>

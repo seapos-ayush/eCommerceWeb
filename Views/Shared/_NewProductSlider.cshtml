@@ -1,0 +1,42 @@
+﻿@{
+    var ImageBasePath = "https://sahosoftweb.com/Images/Ecomm/";
+    var productList = ViewBag.productListByStatusIdAndCatgIdData as List<ProductViewModel>;
+}
+
+@if (productList != null && productList.Any())
+{
+    <div class="theme-card">
+        <h5 class="title-border">new product</h5>
+        <div class="offer-slider slide-1">
+            @for (int i=0; i<productList.Count; i+= 2)
+            {
+                <div>
+                    @for (int j = i; j < i + 2 && j < productList.Count; j++ )
+                    {
+                        var product = productList[j];
+
+                        <div class="media">
+                            <a href="@Url.Action("ProductDetails", "Product", new { category = product.Category, id = product.Id })">
+                                <img class="img-fluid blur-up lazyload"
+                                     style="width: 150px;height: 220px;object-fit: cover;object-position: top;"
+                                     src="@($"{@ImageBasePath}{@product.Pictures.FirstOrDefault() ?? "default.jpg"}")" alt="@product.Name">
+                            </a>
+                            <div class="media-body align-self-center">
+                                <br><a href="@Url.Action("ProductDetails", "Product", new { category = product.Category, id = product.Id })" tabindex="0">
+                                    <h6>@product.Name</h6>
+                                </a>
+                                <h4 class="mb-0"> ₹@product.SalePrice </h4>
+                                <h4 class="m-0">
+                                    <del>
+                                        <span _ngcontent-ng-c2762647480=""
+                                              class="money">₹@product.Price </span>
+                                    </del>
+                                </h4>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}

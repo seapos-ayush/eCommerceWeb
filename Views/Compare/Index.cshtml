@@ -1,0 +1,128 @@
+﻿@{
+    ViewData["Title"] = "comparelist";
+    var ImageBasePath = "https://sahosoftweb.com/Images/Ecomm/";
+}
+@model List<ProductSessionModel>
+<!-- breadcrumb start -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h2>compare</h2>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">compare</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- breadcrumb End -->
+<!-- section start -->
+<section class="compare-padding">
+    <div class="container">
+     @if(Model != null && Model.Any())
+     {
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="compare-page">
+                        <div class="table-wrapper table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr class="th-compare">
+                                        <td>Action</td>
+                                        @foreach (var product in Model)
+                                        {
+                                            <th class="item-row">
+                                                <form asp-action="RemoveFromCompare" asp-controller="Compare" method="post">
+                                                    <input type="hidden" name="productId" value="@product.Id" />
+                                                    <button type="submit" class="remove-compare text-danger">
+                                                        Remove <i class="fa fa-trash ms-1" aria-hidden="true"></i>
+                                                    </button>
+                                             </form>
+                                            </th>
+                                        }
+
+                                    </tr>
+                                </thead>
+                                <tbody id="table-compare">
+                                    <tr>
+                                        <th class="product-name">Product Name</th>
+                                        @foreach (var product in Model)
+                                        {
+                                        <td class="grid-link__title">@product.Name</td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <th class="product-name">Product Image</th>
+                                        @foreach (var product in Model)
+                                        {
+                                            <td class="item-row">
+                                                <img src="@($"{@ImageBasePath}{@product.Pictures ?? "default.jpg"}")" alt="@product.Name"
+                                                     class="featured-image">
+                                                <div class="product-price product_price">
+                                                    <strong>
+                                                        On Sale:
+                                                    </strong><span>$@product.SalePrice</span>
+                                                </div>
+                                                <form class="variants clearfix"  asp-action="AddToCart" asp-controller="Cart" method="post">
+                                                    <input type="hidden" name="Id" value="@product.Id" />
+                                                    <input type="hidden" name="Name" value="@product.Name" />
+                                                    <input type="hidden" name="SalePrice" value="@product.SalePrice" />
+                                                    <input type="hidden" name="Price" value="@product.Price" />
+                                                    <input type="hidden" name="Pictures" value="@product.Pictures" />
+                                                    <input type="hidden" name="ShortDetails" value="@product.ShortDetails" />
+                                                    <input type="hidden" name="Stock" value="@product.Stock" />
+                                                    <input type="hidden" name="Colors" value="@product.Colors" />
+                                                    <input type="hidden" name="Size" value="@product.Size" />
+                                                    <input type="hidden" name="Category" value="@product.Category" />
+                                                    <button type="submit" class="add-to-cart btn btn-solid">Add To Cart</button>
+                                                </form>
+
+                                                <p class="grid-link__title hidden">Cut Dress</p>
+                                            </td>
+                                        }
+                                    </tr>
+                                    <tr>
+                                        <th class="product-name">Product Description</th>
+                                        @foreach (var product in Model)
+                                        {
+                                            <td class="item-row">
+                                                <p class="description-compare">
+                                                    @product.ShortDetails
+                                                </p>
+                                            </td>
+                                        }
+                                    <tr>
+                                        <th class="product-name">Availability</th>
+                                        @foreach (var product in Model)
+                                            {
+                                            <td class="available-stock">
+                                                <p>@product.Stock Available In stock</p>
+                                            </td>
+                                            }
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+        else
+        {
+            <div class="text-center my-5">
+                <h3>Your compare list is empty.</h3>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-3">Shop Now</a>
+            </div>
+        }
+    </div>
+</section>
+<!-- Section ends -->

@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "My Address";
+}
+@model List<AddressResponse>
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3>My Address</h3>
+            <div class="border-2 border-bottom border-warning" style="width: 90px;"></div>
+        </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col-12">
+            <a class="text-success-emphasis fs-6">
+                <i aria-hidden="true" class="fa fa-angle-left me-3"></i> Back To My Account
+            </a>
+        </div>
+    </div>
+    <div class="row mb-5">
+        @if (Model != null && Model.Any())
+        {
+            @foreach(var address in Model)
+            {
+                <div class="col-sm-4 mb-lg-0 mb-3 ng-star-inserted">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between">
+                                <p class="text-dark fw-bold fs-6">@address.FirstName @address.LastName</p>
+                                <p>
+                                    <span class="px-2 border border-secondary-subtle rounded-1 text-uppercase"
+                                          style="font-size: 0.7rem;">@(address.IsDefault == 1 ? "Default" : "")</span>
+                                </p>
+                            </div>
+                            <p class="card-text fw-medium">@address.Address, @address.City</p>
+                            <p class="card-text mb-1">@address.State, @address.Country</p>
+                            <p class="card-text">Contact Number: @address.Phone</p>
+                            <div>
+                                <a class="me-3 fw-bold add_add" href="@Url.Action("EditAddress", "Order", new { Id = address.AddressId, UserId = address.CustomerId, returnUrl = "/Home/Account/MyAddress" })">Edit</a>|
+                                <a class="me-3 ms-3 fw-bold add_add" onclick="confirmRemove(@address.AddressId)" >Remove</a>
+                                <!---->
+                                @if(address.IsDefault != 1)
+                                {
+                                    @* <a class="ms-3 fw-bold add_add" href="@Url.Action("SetDefaultAddress", "Order", new { addressId = address.AddressId, CustomerId=address.CustomerId, returnUrl = "/Home/Account/MyAddress" })">Set as Default</a> *@
+                                    <form asp-action="SetDefaultAddress" asp-controller="Order" method="post">
+                                        <input type="hidden" name="addressId" value="@address.AddressId" />
+                                        <input type="hidden" name="CustomerId" value="@address.CustomerId" />
+                                        <input type="hidden" name="returnUrl" value="/Home/Account/MyAddress" />
+                                        <button type="submit" class="ms-3 fw-bold add_add btn btn-link p-0" style="text-decoration: none;">Set as Default</button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        <!---->
+        <div class="col-sm-4 address_add">
+            <a href="@Url.Action("AddAddress", "Order", new { returnUrl = "/Home/Account/MyAddress"})">
+                <div class="default rounded-2">
+                    <div class="border-0 center-span bg-white">
+                        <i aria-hidden="true" class="fa fa-plus fs-5 text-primary"></i>
+                    </div>
+                    <div class="center-span mt-5 text-primary border-0 bg-white fw-bold">Add Address</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+@section Scripts {
+   @*  <script>
+        function confirmRemove(addressId) {
+            if (confirm("Are you sure you want to remove this address?")) {
+                window.location.href = '@Url.Action("RemoveAddress", "Order")' + '?addressId=' + addressId + '&returnUrl=/Home/Account/MyAddress';
+            }
+        }
+    </script> *@
+
+
+    <script>
+        function confirmRemove(addressId) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Create form and submit it
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '@Url.Action("RemoveAddress", "Account")';
+
+                    const addressInput = document.createElement('input');
+                    addressInput.type = 'hidden';
+                    addressInput.name = 'Id';
+                    addressInput.value = addressId;
+
+
+                    form.appendChild(addressInput);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
+
+}

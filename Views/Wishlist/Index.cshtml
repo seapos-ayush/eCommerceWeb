@@ -1,0 +1,107 @@
+﻿@{
+    ViewData["Title"] = "wishlist";
+    var ImageBasePath = "https://sahosoftweb.com/Images/Ecomm/";
+}
+@model List<ProductSessionModel>
+<div class="breadcrumb-section d-lg-block d-none">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h2>wishlist</h2>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Action("Index","Home")">Home</a>
+                        </li>
+                        <li class="breadcrumb-item active">wishlist</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row py-3 ng-star-inserted">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var product in Model)
+            {
+                <div class="col-md-3 mb-5 ng-star-inserted">
+                    <div>
+                        <div class="rounded">
+                            <a href="@Url.Action("ProductDetails", "Product", new { category = product.Category, id = product.Id })">
+                                <img alt="Sample" class="img-fluid"
+                                style="width: 100%; height: 350px; object-fit: fill;"
+                                     src="@($"{@ImageBasePath}{@product.Pictures ?? "default.jpg"}")" alt="@product.Name" >
+                            </a>
+                        </div>
+                        <div class="pt-2 titleSection border"
+                        style="box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;">
+                            <div class="border-bottom px-2">
+                                <p class="fs-6 mb-1"> @product.Name</p>
+                                <div class="text-muted small productName">
+                                    @product.ShortDetails
+                                </div>
+                                @{
+                                    var discountPercent = 0;
+                                    if (product.Price > 0)
+                                    {
+                                        discountPercent = (int)Math.Round((decimal)(product.Price - product.SalePrice) / product.Price * 100);
+                                    }
+                                }
+
+                                <div class="productPrice mb-2">
+                                    <strong class="sp_amount">₹@product.SalePrice</strong>
+                                    <div class="discount">
+                                        <strong class="mrp_amount">₹@product.Price</strong>
+                                        <span>@discountPercent% OFF</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between">
+
+                                 <div class="w-100" >
+                                    <form asp-action="AddToCart" asp-controller="Cart" method="post">
+                                        <input type="hidden" name="Id" value="@product.Id" />
+                                        <input type="hidden" name="Name" value="@product.Name" />
+                                        <input type="hidden" name="SalePrice" value="@product.SalePrice" />
+                                        <input type="hidden" name="Price" value="@product.Price" />
+                                        <input type="hidden" name="Pictures" value="@product.Pictures" />
+                                        <input type="hidden" name="ShortDetails" value="@product.ShortDetails" />
+                                        <input type="hidden" name="Stock" value="@product.Stock" />
+                                        <input type="hidden" name="Colors" value="@product.Colors" />
+                                        <input type="hidden" name="Size" value="@product.Size" />
+                                        <input type="hidden" name="Category" value="@product.Category" />
+
+                                        <button type="submit" class="btn btn-solid w-100 p-1 border-end" style="font-size: .8rem;"> <i class="fa fa-shopping-cart me-1" aria-hidden="true"></i>add to cart</button>
+                                    </form>
+                                    </div>
+                                    <div class="w-100">
+                                    <form asp-action="RemoveFromWishlist" asp-controller="Wishlist" method="post">
+                                            <input type="hidden" name="productId" value="@product.Id" />
+                                        <button type="submit" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="Remove from wishlist" class="btn btn-solid w-100 p-1"
+                                                style="font-size: .8rem;">
+                                            <i class="fa fa-trash-o" aria-hidden="true"></i> Remove
+                                        </button>
+                                    </form>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        } else {
+            <div class="col-12 text-center py-5">
+                <h4>Your wishlist is empty.</h4>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-3">Continue Shopping</a>
+            </div>
+        }
+    </div>
+</div>

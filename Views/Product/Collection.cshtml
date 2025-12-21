@@ -1,0 +1,374 @@
+﻿@{
+    ViewData["Title"] = "Product Collection";
+    var ImageBasePath = "https://sahosoftweb.com/Images/Ecomm/";
+    var products = ViewBag.ProductListByCategoryData;
+    var totalProducts = products != null ? ((List<ProductViewModel>)products).Count : 0;
+
+    //Added New
+    var categoriesFromViewBag = ViewBag.categories as IEnumerable<CategoryItemsResponse>;
+    var hasViewBagCategories = categoriesFromViewBag != null && categoriesFromViewBag.Any();
+   
+    var selectedCategoryId = ViewBag.CategoryId;
+    var selectedCategory = categoriesFromViewBag?.FirstOrDefault(c => c.Id == selectedCategoryId);
+}
+<div class="breadcrumb-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h2>Collection</h2>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                        <li aria-current="page" class="breadcrumb-item active">
+                            collection
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- section start -->
+<section class="section-b-space ratio_asos">
+    <div class="collection-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3 collection-filter">
+                    <!-- side-bar colleps block stat -->
+                    <div class="collection-filter-block">
+                            <div class="collection-collapse-block border-0 open">
+                                <h3 id="categoryToggleId" class="collapse-block-title">Category</h3>
+                                <div id="categoryToggle" class="collection-collapse-block-content" style="">
+                                    <div class="collection-brand-filter">
+                                        <ul class="category-list">
+                                        @if (hasViewBagCategories)
+                                        {
+                                            @foreach (var cat in categoriesFromViewBag)
+                                            {
+                                                <li><a href="@Url.Action("Collection", "Product", new { category = cat.Name, categoryId = cat.Id })">@cat.Name</a></li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li><a href="@Url.Action("collection", "product", new { category = "men", categoryId = 1 })">Men</a></li>
+                                            <li><a href="@Url.Action("collection", "product", new { category = "women", categoryId = 2 })">Women</a></li>
+                                        }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+
+                    <div class="collection-filter-block">
+                        <!-- brand filter start -->
+                        <div class="collection-mobile-back">
+                            <span class="filter-back">
+                                <i class="fa fa-angle-left"
+                                   aria-hidden="true"></i> back
+                            </span>
+                        </div>
+                        <div class="collection-collapse-block open">
+                            <h3 class="collapse-block-title">brand</h3>
+                            <div class="collection-collapse-block-content">
+                                <div class="collection-brand-filter">
+                                    @foreach (var brand in ViewBag.UniqueBrands)
+                                    {
+                                        <div class="form-check collection-filter-checkbox">
+                                            <input type="checkbox" class="form-check-input brand-filter" value="@brand" id="@brand">
+                                            <label class="form-check-label" for="@brand">@brand</label>
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <!-- color filter start here -->
+                        <div class="collection-collapse-block open">
+                            <h3 class="collapse-block-title">colors</h3>
+                            <div class="collection-collapse-block-content">
+                                <div class="color-selector">
+                                    <ul>
+                                        @foreach (var color in ViewBag.UniqueColors)
+                                    {
+                                            <li class="color-dot" data-color="@color" style="background-color:@color"></li>
+                                    }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- price filter start here -->
+                        <div class="collection-collapse-block border-0 open">
+                            <h3 class="collapse-block-title">price</h3>
+                            <div class="collection-collapse-block-content">
+                                <div class="wrapper mt-3">
+                                    <div id="priceSlider"></div>
+                                    <div class="mt-2">
+                                        Selected Range:  ₹<span id="minPrice">0</span> - ₹<span id="maxPrice">1000</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- silde-bar colleps block end here -->
+                    <!-- side-bar single product slider start -->
+                    @await Html.PartialAsync("_NewProductSlider")
+                    <!-- side-bar single product slider end -->
+
+                </div>
+                <div class="collection-content col">
+                    <div class="page-main-content">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="top-banner-wrapper">
+                                    @if (selectedCategory != null)
+                                    {
+                                        <img style="width: 100%; height: 500px; object-fit: cover;"
+                                             src="@(ImageBasePath)@(selectedCategory.ImagePath)"
+                                             alt="" class="img-fluid">
+                                    }
+
+                                   @*  @if (ViewBag.CategoryId == 1)
+                                    {
+                                        <img style="width: 100%; height: 500px; object-fit: cover;"
+                                             src="~/assets/images/mens.jpg"
+                                        alt="" class="img-fluid">
+                                    } else
+                                    {
+                                        <img style="width: 100%; height: 500px; object-fit: cover;"
+                                             src="~/assets/images/womens.jpg"
+                                             alt="" class="img-fluid">
+                                    } *@
+
+                                    <div class="top-banner-content small-section">
+                                        <h4>fashion</h4>
+                                        <h5>Sahosoft MAll</h5>
+                                        <p>Sahosoft </p>
+                                    </div>
+                                </div>
+                                <div class="collection-product-wrapper">
+                                    <div class="product-top-filter">
+                                        <div class="row">
+                                            <div class="col-xl-12">
+                                                <div class="filter-main-btn">
+                                                    <span class="filter-btn btn btn-theme">
+                                                        <i class="fa fa-filter"
+                                                           aria-hidden="true"></i> Filter
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="product-filter-content">
+                                                    <div class="search-count">
+                                                        <h5>Showing Products 1-@totalProducts of @totalProducts Result</h5>
+                                                    </div>
+                                                    <div class="collection-view">
+                                                        <ul>
+                                                            <li><i class="fa fa-th grid-layout-view"></i></li>
+                                                            <li><i class="fa fa-list-ul list-layout-view"></i></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="collection-grid-view">
+                                                        <ul>
+                                                            <li>
+                                                                <img src="assets/images/icon/2.png" alt=""
+                                                                     class="product-2-layout-view">
+                                                            </li>
+                                                            <li>
+                                                                <img src="assets/images/icon/3.png" alt=""
+                                                                     class="product-3-layout-view">
+                                                            </li>
+                                                            <li>
+                                                                <img src="assets/images/icon/4.png" alt=""
+                                                                     class="product-4-layout-view">
+                                                            </li>
+                                                            <li>
+                                                                <img src="assets/images/icon/6.png" alt=""
+                                                                     class="product-6-layout-view">
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="product-page-per-view">
+                                                        <select>
+                                                            <option value="High to low">
+                                                                24 Products Par Page
+                                                            </option>
+                                                            <option value="Low to High">
+                                                                50 Products Par Page
+                                                            </option>
+                                                            <option value="Low to High">
+                                                                100 Products Par Page
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="product-page-filter">
+                                                        <select>
+                                                            <option value="High to low">Sorting items</option>
+                                                            <option value="Low to High">50 Products</option>
+                                                            <option value="Low to High">100 Products</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product-wrapper-grid">
+                                        <div class="row margin-res">
+                                            @await Html.PartialAsync("_FetchProducts", ViewBag.ProductListByCategoryData as List<ProductViewModel>)
+                                        </div>
+                                    </div>
+                                    <div class="product-pagination">
+                                        <div class="theme-paggination-block">
+                                            <div class="row">
+                                                <div class="col-xl-6 col-md-6 col-sm-12">
+                                                    <nav aria-label="Page navigation">
+                                                        <ul class="pagination">
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="#"
+                                                                   aria-label="Previous">
+                                                                    <span aria-hidden="true">
+                                                                        <i class="fa fa-chevron-left"
+                                                                           aria-hidden="true"></i>
+                                                                    </span> <span class="sr-only">Previous</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="page-item active">
+                                                                <a class="page-link"
+                                                                   href="#">1</a>
+                                                            </li>
+                                                            <li class="page-item">
+                                                                <a class="page-link"
+                                                                   href="#">2</a>
+                                                            </li>
+                                                            <li class="page-item">
+                                                                <a class="page-link"
+                                                                   href="#">3</a>
+                                                            </li>
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="#"
+                                                                   aria-label="Next">
+                                                                    <span aria-hidden="true">
+                                                                        <i class="fa fa-chevron-right"
+                                                                           aria-hidden="true"></i>
+                                                                    </span> <span class="sr-only">Next</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                                <div class="col-xl-6 col-md-6 col-sm-12">
+                                                    <div class="product-search-count-bottom">
+                                                        <h5>Showing Products 1-@totalProducts of @totalProducts Result</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- section End -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const priceSlider = document.getElementById('priceSlider');
+
+        // Initialize noUiSlider
+        noUiSlider.create(priceSlider, {
+            start: [0, 2000],       // Initial range
+            connect: true,
+            step: 50,
+            range: {
+                'min': 0,
+                'max': 2000
+            },
+            format: {
+                to: value => Math.round(value),
+                from: value => Number(value)
+            }
+        });
+
+        const minPrice = document.getElementById('minPrice');
+        const maxPrice = document.getElementById('maxPrice');
+
+        priceSlider.noUiSlider.on('update', function (values) {
+            minPrice.innerText = values[0];
+            maxPrice.innerText = values[1];
+        });
+
+        priceSlider.noUiSlider.on('change', function () {
+            filterProducts(); // Trigger filter when price changes
+        });
+
+        const brandCheckboxes = document.querySelectorAll(".brand-filter");
+        const colorDots = document.querySelectorAll(".color-dot");
+
+
+        let selectedColor = null;
+
+
+
+            colorDots.forEach(dot => {
+        dot.addEventListener("click", () => {
+            const clickedColor = dot.dataset.color;
+
+            if (selectedColor === clickedColor) {
+                // Deselect
+                dot.classList.remove("active");
+                selectedColor = null;
+            } else {
+                // Select new color
+                colorDots.forEach(d => d.classList.remove("active"));
+                dot.classList.add("active");
+                selectedColor = clickedColor;
+            }
+
+            filterProducts();
+        });
+    });
+
+
+        // Brand checkbox change
+        brandCheckboxes.forEach(cb => {
+            cb.addEventListener("change", filterProducts);
+        });
+
+        function filterProducts() {
+            const selectedBrands = Array.from(brandCheckboxes)
+                .filter(c => c.checked)
+                .map(c => c.value);
+
+            const [min, max] = priceSlider.noUiSlider.get().map(v => parseInt(v));
+
+            fetch('/home/product/productfilterbybrandandcolor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    brands: selectedBrands,
+                    color: selectedColor,
+                    categoryId: @ViewBag.categoryId,
+                    minPrice: min,
+                    maxPrice: max
+                })
+            })
+            .then(res => res.text())
+            .then(html => {
+                document.querySelector(".product-wrapper-grid .row").innerHTML = html;
+            });
+        }
+    });
+
+</script>

@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "My Account";
+}
+
+<div class="container" style="min-height: 500px;">
+    <div class="row justify-content-center">
+        <div class="col-11 mb-lg-5 mb-0">
+            <h3>My Account</h3>
+            <div class="border-2 border-bottom border-warning" style="width: 90px;"></div>
+            <div class="row mt-5 py-3 border-2 border-bottom">
+                <div class="col-lg-3 col-6 border-1 border-end">
+                    <a href="@Url.Action("MyOrders", "Order")">
+                        <p class="title fs-6 fw-bold text-dark">
+                            My Orders
+                            <span>
+                                <i aria-hidden="true" class="fa fa-angle-right ms-5"></i>
+                            </span>
+                        </p>
+                        <p class="text">View, modify and track orders</p>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-6 border-1 border-end">
+                    <a href="@Url.Action("MyPayments", "Order")">
+                        <p class="title fs-6 fw-bold text-dark">
+                            My Payments
+                            <span>
+                                <i aria-hidden="true" class="fa fa-angle-right ms-5"></i>
+                            </span>
+                        </p>
+                        <p class="text">View and modify payment methods</p>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-6 border-1 border-end">
+                    <a href="@Url.Action("MyAddress", "Account")">
+                        <p class="title fs-6 fw-bold text-dark">
+                            My Address
+                            <span>
+                                <i aria-hidden="true" class="fa fa-angle-right ms-5"></i>
+                            </span>
+                        </p>
+                        <p class="text">Edit, add or remove addresses</p>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <a href="@Url.Action("MyProfile", "Account")">
+                        <p class="title fs-6 fw-bold text-dark">
+                            My Profile
+                            <span>
+                                <i aria-hidden="true" class="fa fa-angle-right ms-5"></i>
+                            </span>
+                        </p>
+                        <p class="text">Edit personal info, change password</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-11 mt-lg-5 mt-0">
+            <div class="row">
+                <div class="col-lg-6 col-12">
+                    <div class="d-flex justify-content-between">
+                        <div class="shopping align-self-center">
+                            <h3 class="fs-5">Buy something to get personalised recommendations.</h3>
+                            <a class="btn btn-solid border-0 mt-5"   href="@Url.Action("Index","Home")" >Continue Shopping</a>
+                        </div>
+                        <div class="image">
+                            <img src="https://images.bewakoof.com/web/empty-account-1530180452.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

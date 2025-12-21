@@ -1,0 +1,107 @@
+﻿@{
+    ViewData["Title"] = "My Profile";
+}
+@model UserProfileRequest
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-9 col-12">
+            <div class="row mb-5">
+                <div class="col-12">
+                    <h3>My Profile</h3>
+                    <div class="border-2 border-bottom border-warning" style="width: 90px;"></div>
+                </div>
+            </div>
+            <div class="row mb-5">
+                <div class="col-12">
+                    <a class="text-success-emphasis fs-6">
+                        <i aria-hidden="true" class="fa fa-angle-left me-3"></i> Back To My Account
+                    </a>
+                </div>
+            </div>
+            <div class="row mb-5">
+                <div class="col-lg-6 col-12">
+                    <form novalidate class="needs-validation" asp-action="UpdateProfile" asp-controller="Account" method="post">
+                        <div class="row justify-content-between mb-3">
+                            <input type="hidden" asp-for="Id" />
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    <input asp-for="FirstName" type="text" placeholder="First Name"
+                                           class="form-control w-100 is-valid" required>
+                                    <label asp-for="FirstName">First Name</label>
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    <input asp-for="LastName"  type="text"  placeholder="Last Name "
+                                           class="form-control w-100">
+                                    <label asp-for="LastName">Last Name</label>
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="email" asp-for="Email" placeholder="abc@gmail.com"
+                                           class="form-control w-100" disabled>
+                                    <label asp-for="Email">Email-Id</label>
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="number" asp-for="Mobile" placeholder="Mobile Number"
+                                           class="form-control w-100">
+                                    <label asp-for="Mobile" >Mobile Number</label>
+                                    <span asp-validation-for="Mobile" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="input-group">
+                                    <input asp-for="Dob" placeholder="Date of Birth" type="date"
+                                           class="form-control">
+                                    <span asp-validation-for="Dob" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-5">
+                            <div class="col-12">
+                                <label>Gender</label>
+                                <div>
+                                    <input type="radio" name="options-outlined" id="success-outlined"
+                                           autocomplete="off" class="btn-check" @(Model.GenderId ? "Checked" : "")>
+                                    <label for="success-outlined"
+                                           class="btn btn-outline-warning text-dark">Male</label>
+                                    <input type="radio" name="options-outlined" id="danger-outlined"
+                                           autocomplete="off" class="btn-check" @(!Model.GenderId ? "Checked" : "")>
+                                    <label for="danger-outlined"
+                                           class="btn btn-outline-warning text-dark">Female</label>
+                                </div>
+                                <span asp-validation-for="GenderId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-solid border-0 text-uppercase">
+                                    Save
+                                    Changes
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

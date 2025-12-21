@@ -1,0 +1,356 @@
+﻿@using eCommerceWeb.Models.Request
+@using eCommerceWeb.Models.Response
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var imagePath = "https://www.sahosoftweb.com/Images/Ecomm/";
+    decimal totalMRP = (decimal)Model.Sum(p => p.Price * p.Quantity);
+    decimal subtotal = (decimal)Model.Sum(p => p.SalePrice * p.Quantity);
+    decimal discount = totalMRP - subtotal;
+
+    var customerAddress = ViewBag.customerAddress as List<AddressResponse>;
+    var selectedAddress = customerAddress.FirstOrDefault(x => x.IsDefault == 1) as AddressResponse;
+    var user = ViewBag.userDetailsSession as LoginResponse;
+}
+@model List<ProductSessionModel>
+
+
+    <div class="breadcrumb-section d-lg-block d-none">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="page-title">
+                        <h2>Checkout </h2>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index","home")">Home</a></li>
+                            <li aria-current="page" class="breadcrumb-item active">Checkout</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@if (Model == null || !Model.Any())
+{
+    @* No product in wish list *@
+
+    <div class="row ng-star-inserted" style="min-height: 500px;">
+        <div class="col-sm-12 empty-cart-cls text-center align-self-center">
+            <img src="~/assets/images/empty-compare.png" class="img-fluid mb-4" />
+
+            <h3>
+                <strong>No Product Added.</strong>
+            </h3>
+
+            <h4>
+                Explore more shortlist some items.
+            </h4>
+        </div>
+    </div>
+}else
+{
+    <div class="container py-lg-5 py-2">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-12">
+                <div class="row">
+                    <div class="col-lg-8 col-12 px-lg-5 px-2">
+                        <div class="mb-3">
+                            <a href="@Url.Action("AddAddress","Order",new { returnUrl = "/home/order/checkout" })" class="btn btn-solid border-0">
+                                <i aria-hidden="true" class="fa fa-plus me-2"></i>Add New Address
+                            </a>
+                        </div>
+                        @if (customerAddress != null && customerAddress.Any())
+                        {
+
+                            @foreach (var add in customerAddress)
+                            {
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body p-4">
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="d-flex">
+                                                            <p class="text-dark fw-bold fs-6">@add.FirstName @add.LastName</p>
+                                                        <p class="ps-2">
+                                                            <span class="px-2 border border-secondary-subtle rounded-1 text-uppercase"
+                                                                  style="font-size: 0.7rem;">@(add.IsDefault == 1 ? "Default" : "Home")</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="float-end">
+                                                        <form asp-controller="Order" asp-action="SetDefaultAddress" method="post" style="display:inline;">
+                                                            <input type="hidden" name="CustomerId" value="@add.CustomerId" />
+                                                            <input type="hidden" name="AddressId" value="@add.AddressId" />
+                                                            <input type="hidden" name="ReturnUrl" value="/home/order/checkout" />
+
+                                                            <input type="radio"
+                                                                   name="rad1"
+                                                                   value="@add.AddressId"
+                                                                   onchange="this.form.submit()"
+                                                                   @(add.IsDefault == 1 ? "checked" : "")
+                                                                   style="scale: 1.6;" />
+
+                                                        </form>
+                                                 
+                                                    </div>
+                                                </div>
+                                                <p class="card-text fw-bold">@add.Address, @add.City</p>
+                                                <p class="card-text mb-1">@add.State-@add.PostalCode, @add.Country </p>
+                                                <p class="card-text">Contact Number: <strong>@add.Phone</strong></p>
+                                                <div><a href="@Url.Action("EditAddress", "Order", new { Id = add.AddressId, UserId = add.CustomerId, returnUrl = "/home/order/checkout"  })" class="me-3 fw-bold add_add">Edit</a></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="col-lg-4 col-12 border-start">
+                        <div class="checkout-details">
+                            <div class="order-box">
+                                <p class="fw-bold text-dark mb-4">You are paying for these items</p>
+
+                                <ul class="qty">
+                                    @foreach (var item in Model)
+                                    {
+                                        <li class="border-bottom mb-2">
+                                            <div class="d-flex justify-content-between pb-2">
+                                                <div class="d-flex">
+                                                    <div class="position-relative">
+                                                        <span class="position-absolute bottom-0 end-0 translate-end bg-dark border-light rounded-circle text-white px-1" style="width: 20px; height: 20px; font-size: 0.9rem;">
+                                                            @item.Quantity
+                                                        </span>
+                                                        <img class="shadow-4" style="width: 50px; height: 60px; object-fit: cover;" src="@($"{imagePath}{item.Pictures}")">
+                                                    </div>
+                                                    <div class="ps-2">
+                                                        <p class="fw-bold mb-0">@item.Name</p>
+                                                        <p class="mb-0">@item.Category</p>
+                                                    </div>
+                                                </div>
+                                                <p class="fw-bold"> ₹@(item.SalePrice * item.Quantity) </p>
+                                            </div>
+                                        </li>
+                                    }
+                            </ul>
+
+                            <ul class="sub-total">
+                                <li class="fw-bold mb-2">Price Summary</li>
+                                <li class="mb-1 d-flex justify-content-between"><p>Total MRP</p><p>₹@totalMRP.ToString("N2")</p></li>
+                                <li class="mb-1 d-flex justify-content-between"><p>Delivery Fee</p><p class="text-success">Free</p></li>
+                                <li class="mb-1 d-flex justify-content-between"><p>Discount</p><p class="text-danger">- ₹@discount.ToString("N2")</p></li>
+                                <hr>
+                                <li class="d-flex justify-content-between fw-bold"><p>Final Amount</p><p>₹@subtotal.ToString("N2")</p></li>
+                            </ul>
+                        </div>
+
+                        <div class="payment-box mt-3">
+                            <div class="form-button text-center">
+                                <button id="payBtn" type="button" class="btn btn-solid px-4">Pay ₹@subtotal.ToString("N2")</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Stripe Payment Modal -->
+<div id="paymentModal" class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Secure Payment</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <strong>Total Amount: ₹@subtotal.ToString("N2")</strong>
+        </div>
+        <div id="payment-element" class="p-3 border rounded"></div>
+        <div id="error-message" class="text-danger mt-2" style="display:none;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button id="confirm-payment" class="btn btn-primary" disabled>
+          <span id="pay-text">Pay Now</span>
+          <span id="pay-spinner" class="spinner-border spinner-border-sm" role="status" style="display:none;"></span>
+        </button>
+      </div>
+      <div class="modal-body text-center text-muted small">
+        <i class="fas fa-lock me-1"></i> Secured by Stripe
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://js.stripe.com/v3/"></script>
+@if (selectedAddress != null)
+{
+        <script>
+            const API_BASE_URL = '@Html.Raw(ViewBag.ApiBaseUrl)';
+         const stripe = Stripe('pk_test_51SdVA2ARoHps1uXbTOXREAprYi40HeujSMg8DjKSFmBATHKgyE2gipFb2aWtPrc3m7QE1JmzZWxmYGVmiPIar2ZU005L5CjGUG');
+        let elements = null;
+        let paymentElement = null;
+
+        // Get subtotal amount (from your model)
+        const subtotalAmount = @((long)subtotal); // Convert to integer INR (e.g., 999)
+
+        // Open payment modal
+        document.getElementById('payBtn').addEventListener('click', async () => {
+
+            const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+            modal.show();
+
+            // Reset UI
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('confirm-payment').disabled = true;
+            document.getElementById('pay-text').textContent = 'Processing...';
+            document.getElementById('pay-spinner').style.display = 'inline-block';
+
+            try {
+                // ✅ Send EXACTLY what your API expects: { amount: 999, currency: "inr" }
+                const response = await fetch(`${API_BASE_URL}PaymentMaster/create-payment-intent`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: subtotalAmount,   // ← Your API expects "Amount" as long (INR)
+                        currency: 'inr'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to initialize payment');
+                }
+
+                // Initialize Stripe Elements
+                elements = stripe.elements({
+                    clientSecret: data.clientSecret,
+                    locale: 'auto'
+                });
+
+                paymentElement = elements.create('payment', { layout: 'tabs' });
+                paymentElement.mount('#payment-element');
+
+                // Enable payment button
+                document.getElementById('pay-text').textContent = 'Pay Now';
+                document.getElementById('pay-spinner').style.display = 'none';
+                document.getElementById('confirm-payment').disabled = false;
+
+                // Handle validation errors
+                paymentElement.on('change', (event) => {
+                    const errorDiv = document.getElementById('error-message');
+                    if (event.error) {
+                        errorDiv.textContent = event.error.message;
+                        errorDiv.style.display = 'block';
+                    } else {
+                        errorDiv.style.display = 'none';
+                    }
+                });
+
+            } catch (error) {
+                document.getElementById('pay-text').textContent = 'Pay Now';
+                document.getElementById('pay-spinner').style.display = 'none';
+                document.getElementById('error-message').textContent = error.message;
+                document.getElementById('error-message').style.display = 'block';
+            }
+        });
+
+        // Confirm payment
+               // Confirm payment
+        document.getElementById('confirm-payment').addEventListener('click', async () => {
+            if (!elements) return;
+
+            document.getElementById('confirm-payment').disabled = true;
+            document.getElementById('pay-text').textContent = 'Processing...';
+            document.getElementById('pay-spinner').style.display = 'inline-block';
+
+            try {
+             
+                const result = await stripe.confirmPayment({
+                  elements,
+                  confirmParams: {
+                    return_url: window.location.origin + '/home/order/payment-success'
+                  },
+                  redirect: 'if_required'
+                });
+                console.log(result);
+
+                if (result.error) {
+                     throw new Error(result.error.message);
+                 } else if (result.paymentIntent) {
+                    // ✅ Payment succeeded WITHOUT redirect → redirect manually
+                        const paymentData = {
+                            firstname: @Html.Raw(Json.Serialize(selectedAddress.FirstName)),
+                            lastname: @Html.Raw(Json.Serialize(selectedAddress.LastName)),
+                            phone: @Html.Raw(Json.Serialize(selectedAddress.Phone)),
+                            email: @Html.Raw(Json.Serialize(user.Email)),
+                            address: @Html.Raw(Json.Serialize(selectedAddress.Address)),
+                            countryId: @selectedAddress.CountryId,
+                            town: @Html.Raw(Json.Serialize(selectedAddress.City)),
+                            state: @Html.Raw(Json.Serialize(selectedAddress.State)),
+                            postalcode: @Html.Raw(Json.Serialize(selectedAddress.PostalCode)),
+                            amount: @Html.Raw(Json.Serialize(subtotal.ToString("F2"))),
+                            shippingAmount: "0",
+                            paymentTypeId: 4,
+                            paymentStatusId: 2,
+                            createdBy: @user.Id,
+
+                            items: @Html.Raw(Json.Serialize(Model.Select(p => new {
+                                productId = p.Id,
+                                quantity = p.Quantity.ToString(),
+                                size = "",
+                                color = "",
+                                price = p.SalePrice.ToString(),
+                                discount = (Math.Round(p.Price - p.SalePrice)).ToString("0")
+                            }))),
+                            payment: {
+                                tokenId: result.paymentIntent.id,
+                                amount: @((int)(subtotal * 100)),
+                                description: "Shopping with sahosoft mall"
+                            }
+                         };
+                           const response = await fetch('/home/order/save-payment', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(paymentData)
+                            });
+                             const data = await response.json();
+                              if (data.success) {
+                                window.location.href = "/home/order/payment-success";
+                              } else {
+                                throw new Error("Order save failed");
+                              }
+                   
+                }
+            } catch (error) {
+                document.getElementById('error-message').textContent = error.message;
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('confirm-payment').disabled = false;
+                document.getElementById('pay-text').textContent = 'Pay Now';
+                document.getElementById('pay-spinner').style.display = 'none';
+            }
+        });
+        // Cleanup on modal close
+        document.getElementById('paymentModal').addEventListener('hidden.bs.modal', () => {
+            if (paymentElement) {
+                paymentElement.destroy();
+                paymentElement = null;
+            }
+            elements = null;
+            document.getElementById('error-message').style.display = 'none';
+        });
+        </script>
+}
+

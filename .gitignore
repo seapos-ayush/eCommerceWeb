@@ -1,0 +1,109 @@
+# Visual Studio / Rider specific
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+.history/
+*.code-workspace
+
+# User-specific files
+*.userprefs
+*.dbmdl
+
+# Backup & temp files
+*.bak
+*.tmp
+*.temp
+*.old
+*.orig
+
+# Publish output
+publish/
+out/
+dist/
+
+# Entity Framework / Migrations
+Migrations/obj/
+Migrations/bin/
+# (Optional) If you generate snapshots
+*MigrationsSnapshot.cs
+
+# Rider and ReSharper
+_ReSharper*/
+*.DotSettings.user
+.idea/
+
+# IIS / Web server
+wwwroot/
+App_Data/
+appsettings.Local.json
+appsettings.Development.json
+secrets.json
+
+# Logs and diagnostic files
+*.svclog
+*.etl
+*.pdb
+*.coverage
+*.coveragexml
+
+# Test / Reports
+*.trx
+TestResults/
+coverage.cobertura.xml
+coverage.opencover.xml
+coverage.json
+
+# Tools and CI/CD artifacts
+.coverage/
+.nuget/
+node_modules/
+packages/
+tools/
+.cache/
+.tmp/
+.env
+.env.*
+
+# Docker
+docker-compose.override.yml
+**/Dockerfile.*
+**/docker-compose.*
+
+# JetBrains Rider caches
+.idea/
+*.sln.iml
+
+# Azure / AWS / Deployment
+*.publishsettings
+*.azurePubxml
+*.key
+*.pem
+*.crt
+*.cer
+*.pfx
+*.p12
+
+# Security-sensitive
+secret.*
+secrets.*
+*.key
+*.token
+*.env.local
+
+# SQLite / Local DBs
+*.db
+*.sqlite
+*.mdf
+*.ldf
+
+# Temporary test data or generated JSON/XML
+*.generated.json
+*.generated.xml
+**/bin/
+**/obj/

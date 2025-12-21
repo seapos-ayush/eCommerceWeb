@@ -1,0 +1,104 @@
+﻿@{
+    ViewData["Title"] = "Registration";
+}
+@model UserRegistration_Request
+
+
+<section class="py-3 mb-lg-0 mb-5" style="background-color: #eee;">
+    <div class="container">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-lg-12 col-xl-11">
+                <div class="card text-black">
+                    <div class="card-body">
+                        <h2 class="text-center mb-4 fw-bold">Customer Registration</h2>
+                        <div class="row justify-content-center">
+
+                            <!-- Registration Form -->
+                            <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                                <form novalidate class="mx-1 mx-md-4 needs-validation" asp-action="SubmitRegistration" asp-controller="Account" method="post">
+
+                                    <!-- First Name -->
+                                    <div class="form-floating mb-4">
+                                        <input asp-for="FirstName" type="text" placeholder="First Name" class="form-control" required />
+                                        <label asp-for="FirstName">First Name</label>
+                                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Last Name -->
+                                    <div class="form-floating mb-4">
+                                        <input asp-for="LastName"  type="text" placeholder="Last Name" class="form-control" required />
+                                        <label asp-for="LastName">Last Name</label>
+                                        <span asp-validation-for="LastName" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="form-floating mb-4">
+                                        <input asp-for="EmailId" type="email" placeholder="name@example.com" class="form-control" required />
+                                        <label asp-for="EmailId">Email address</label>
+                                        <span asp-validation-for="EmailId" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Password -->
+                                    <div class="form-floating mb-4">
+                                        <input asp-for="Password" type="password" placeholder="Password" class="form-control" required />
+                                        <label asp-for="Password">Password</label>
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Confirm Password -->
+                                    <div class="form-floating mb-4">
+                                        <input asp-for="ConfirmPassword" type="password" placeholder="Confirm Password" class="form-control" required />
+                                        <label asp-for="ConfirmPassword">Confirm Password</label>
+                                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Register Button -->
+                                    <div class="mx-4 mb-3 mb-lg-4 text-center">
+                                        <button type="submit" class="btn btn-solid p-2 px-4">Register</button>
+                                        <p class="small fw-bold mt-2 pt-1 mb-0">
+                                            Already have an account?
+                                            <a href="@Url.Action("Login","Account")" class="link-danger">Login</a>
+                                        </p>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Image Section -->
+                            <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+                                <img src="@Url.Content("~/assets/images/draw.png")"
+                                     alt="Sample image"
+                                     class="img-fluid" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+<script>
+        (function () {
+      'use strict'
+
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.querySelectorAll('.needs-validation')
+
+      // Loop over them and prevent submission
+      Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+
+            form.classList.add('was-validated')
+          }, false)
+        })
+    })()
+</script>

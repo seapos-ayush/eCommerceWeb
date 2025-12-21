@@ -1,0 +1,802 @@
+﻿@using eCommerceWeb.Models.Request
+@using eCommerceWeb.Models.Response
+@using eCommerceWeb.Services.Interface
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="sahosoft">
+    <meta name="keywords" content="sahosoft">
+    <meta name="author" content="sahosoft">
+    <link rel="icon" href="~/assets/images/favicon/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="~/assets/images/favicon/favicon.ico" type="image/x-icon">
+    <title>Sahosoft Mall</title>
+
+    <!--Google font-->
+    <link href="../../css?family=Lato:300,400,700,900" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="../../css2-2?family=Yellowtail&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <!-- Icons -->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/font-awesome.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!--Slick slider css-->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/slick.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/slick-theme.css">
+
+    <!-- Animate icon -->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/animate.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/price-range.css">
+
+    <!-- Themify icon -->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/themify-icons.css">
+
+    <!-- Bootstrap css -->
+    <!-- <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/bootstrap.css"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Theme css -->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+
+    <!-- modified css -->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/modified.css">
+
+     @* Sweet alert  *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css" rel="stylesheet" />
+
+
+    @RenderSection("styles", required: false)
+
+</head>
+
+<body>
+
+    @{
+        var imageBasePath = "https://sahosoftweb.com/Images/Ecomm/";
+        var userSession = ViewBag.userDetailsSession as LoginResponse;
+
+
+        //For Categories
+        var userId = userSession?.Id ?? 1;
+        if (userSession?.UserType == "") userId = 1;
+        var categoryService = Context.RequestServices.GetService(typeof(IProductService)) as IProductService;
+        var categories = Enumerable.Empty<CategoryItemsResponse>();
+
+        if (categoryService != null)
+        {
+            var getAllReq = new GetAllByUserId { UserId = userId };
+            var categoryTask = categoryService.GetCategoryAsync(getAllReq);
+            categoryTask.Wait();
+            var result = categoryTask.Result;
+            categories = result?.Data ?? Enumerable.Empty<CategoryItemsResponse>();
+        }
+
+        // For Compare List
+        var compareList = ViewBag.compareList as List<ProductSessionModel>;
+        var hasItemsInCompareList = compareList != null && compareList.Count > 0;
+        var countOfCompareItems = hasItemsInCompareList ? compareList?.Count : 0;
+
+        // For Wishlist
+        var wishList = ViewBag.wishList as List<ProductSessionModel>;
+        var hasItemsInWishList = wishList != null && wishList.Count > 0;
+        var countOfWishListItems = hasItemsInWishList ? wishList?.Count : 0;
+
+        // For Cart List
+        var cartList = ViewBag.cartList as List<ProductSessionModel>;
+        var hasItemsInCartList = cartList != null && cartList.Any();
+        var countOfCartItems = hasItemsInCartList ? cartList?.Count : 0;
+
+        var subTotal = cartList != null ? cartList.Sum(c => c.SalePrice * c.Quantity) : 0;
+    }
+
+    <header id="sticky" class="sticky">
+        <div class="mobile-fix-option"></div>
+        <div class="top-header mb-lg-0 mb-3 d-md-block d-none">
+            <div class="container">
+                <div class="container-fluid top_bar">
+                    <nav class="px-3">
+                        <ul class="logo d-none d-lg-flex">
+                            <li class="text-white">
+                                <i class="bi bi-telephone-fill me-1 text-white"></i>
+                                Call Us
+                                : 8376817046
+                            </li>
+                        </ul>
+                        <ul>
+                            <li>
+                                <a class="text-white" href="@Url.Action("Index","Compare")">
+                                    <i class="bi bi-shuffle me-1 text-white"></i>
+                                    compare
+                                @if(hasItemsInCompareList)
+                                    {
+                                        <span class="badge bg-danger rounded-pill ms-1">
+                                            @countOfCompareItems
+                                        </span>
+                                    }
+                                </a></li>
+                            <li><a class="text-white" href="@Url.Action("Index","Wishlist")">
+                                    <i class="bi bi-heart-fill me-1"></i>wishlist
+                                @if(hasItemsInWishList)
+                                    {
+                                        <span class="badge bg-danger rounded-pill ms-1">
+                                            @countOfWishListItems
+                                        </span>
+                                    }
+                                </a></li>
+                            <li class="ng-star-inserted">
+                                @if (userSession != null)
+                                {
+                                    <a class="link hover-color text-white">
+                                        <i class="bi bi-person-fill me-1"></i>Hello,&nbsp;@userSession.FirstName
+                                    </a>
+                                    <ul class="border shadow round">
+                                        <li class="mt-1 ms-3 p-2">
+                                            <a class="link" href="@Url.Action("MyAccount", "Account")">
+                                                My
+                                                Account
+                                            </a>
+                                        </li>
+                                        <li class="mt-1 ms-3 p-2"><a class="link" href="@Url.Action("MyOrders", "Order")"> My Orders </a></li>
+                                        <li class="mt-1 ms-3 p-2"><a class="link" href="@Url.Action("Logout", "Account")"> Logout </a></li>
+                                    </ul>
+                                } else
+                                {
+                                    <a class="btn btn-solid p-0 px-2" href="@Url.Action("Login", "Account")"> Login </a>
+                                }
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-fix-option"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="main-menu">
+                        <div class="menu-left">
+                            <div class="navbar py-0">
+                                <a href="javascript:void(0)" onclick="openNav()">
+                                    <div class="bar-style"><i aria-hidden="true" class="fa fa-bars sidebar-bar"></i>
+                                    </div>
+                                </a>
+                                <div id="mySidenav" class="sidenav">
+                                    <a href="javascript:void(0)" class="sidebar-overlay" onclick="closeNav()"></a>
+                                    <nav>
+                                        <div onclick="closeNav()">
+                                            <div class="sidebar-back text-left"><i aria-hidden="true"
+                                                    class="fa fa-angle-left pr-2"></i> Back </div>
+                                        </div>
+                                        <ul id="sub-menu" class="sm pixelstrap sm-vertical"
+                                            data-smartmenus-id="17483286421025542">
+                                            <li class="ng-star-inserted">
+                                                <a href="javascript:void(0)" class="ng-star-inserted has-submenu"
+                                                    id="sm-17483286421025542-1" aria-haspopup="true"
+                                                    aria-controls="sm-17483286421025542-2" aria-expanded="false">
+                                                    <span class="sub-arrow">+</span> Clothing
+                                                    <span class="ms-5 ng-star-inserted"><i aria-hidden="true"
+                                                            class="fa fa-angle-right"></i></span>
+                                                </a>
+                                                <ul class="clothing-menu mega-menu ng-star-inserted"
+                                                    id="sm-17483286421025542-2" role="group" aria-hidden="true"
+                                                    aria-labelledby="sm-17483286421025542-1" aria-expanded="false">
+                                                    <li class="ng-star-inserted">
+                                                        <div class="row m-0">
+                                                            <div class="col-xl-4 ng-star-inserted">
+                                                                <div class="link-section">
+                                                                    <h5>mens-fashion</h5>
+                                                                    <ul>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> sports-wear
+                                                                            </a></li>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> top </a></li>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> bottom </a>
+                                                                        </li>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> ethic-wear
+                                                                            </a></li>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> sports-wear
+                                                                            </a></li>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> shirts </a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl-4 ng-star-inserted">
+                                                                <div class="link-section">
+                                                                    <h5>women-fashion</h5>
+                                                                    <ul>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> dresses </a>
+                                                                        </li>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> skirts </a>
+                                                                        </li>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> westarn-wear
+                                                                            </a></li>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> ethic-wear
+                                                                            </a></li>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> sports-wear
+                                                                            </a></li>
+                                                                        <li class="ng-star-inserted"><a
+                                                                                href="#"
+                                                                                class="ng-star-inserted"> bottom-wear
+                                                                            </a></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <a class="mega-menu-banner"
+                                                                    href="/angular/sahosoftmall/home/shop"><img
+                                                                        src="~/assets/images/mega-menu/bag.jpg" alt=""
+                                                                        class="img-fluid"></a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                            <div class="brand-logo p-0"><a href="@Url.Action("Index","Home")"><img
+                                        src="~/assets/images/icon//logo.png"
+                                        alt="" class="img-fluid"></a></div>
+                            </div>
+                        <div class="menu-right pull-right">
+                            <div class="align-self-center">
+                                <nav id="main-nav">
+                                    <div class="toggle-nav"><i class="fa fa-bars sidebar-bar"></i></div>
+                                    <ul id="main-menu" class="sm pixelstrap sm-horizontal"
+                                        data-smartmenus-id="17483286421025864">
+                                        <li class="nav-item d-lg-none d-block">
+                                            <div class="border-bottom">
+                                                <div class="sidebar-back text-left p-2 py-4 fs-5 fw-bold"><i
+                                                        aria-hidden="true" class="fa fa-angle-left pr-2"></i> Back
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="nav-item"><a class="py-4" href="@Url.Action("Index","Home")">Home</a></li>
+                                         @{
+                                            bool hasCategories = categories.Any();
+                                            if (hasCategories)
+                                            {
+                                                foreach (var cat in categories)
+                                                {
+                                                    <li class="nav-item">
+                                                        <a class="py-4" href="@Url.Action("Collection", "Product", new { category = cat.Name?.ToLowerInvariant(), categoryId = cat.Id })">
+                                                            @cat.Name
+                                                        </a>
+                                                    </li>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <!-- Fallback if API fails -->
+                                                <li class="nav-item"><a class="py-4" href="@Url.Action("Collection", "Product", new { category = "men", categoryId = 1 })">Men</a></li>
+                                                <li class="nav-item"><a class="py-4" href="@Url.Action("Collection", "Product", new { category = "women", categoryId = 2 })">Women</a></li>
+                                            }
+                                        }
+
+                                     @*    <li class="nav-item">
+                                            <a class="py-4" href="@Url.Action("Collection", "Product",new {category = "men", categoryId = 1  })">Men</a>
+                                        </li>
+                                        <li class="nav-item"><a class="py-4"
+                                               href="@Url.Action("Collection", "Product", new { category = "women", categoryId = 2 })">Women</a>
+                                        </li> *@
+                                        <li class="nav-item"><a class="py-4"
+                                               href="@Url.Action("AboutUs", "Home")">About Us</a>
+                                        </li>
+                                        <li class="nav-item"><a class="py-4"
+                                               href="@Url.Action("Index", "ContactUs")">Contact Us</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <div>
+                                <div class="cart_section">
+                                    <div class="icon-nav">
+                                        <ul>
+                                            <li class="onhover-div mobile-search d-md-none d-block login">
+                                                <div>
+                                                    <a><i class="fa fa-user"></i></a>
+                                                    <div class="show-div setting user">
+                                                        <ul>
+                                                            <li class="mt-1 ms-3 p-2">
+                                                                <a class="link"
+                                                                    href="@Url.Action("MyAccount","Account")"> My Account
+                                                                </a>
+                                                            </li>
+                                                            <li class="mt-1 ms-3 p-2">
+                                                                <a class="link"
+                                                                   href="@Url.Action("MyOrder", "Order")">
+                                                                    My
+                                                                    Orders </a>
+                                                            </li>
+                                                            <li class="mt-1 ms-3 p-2">
+                                                                <a class="link" asp-controller="Account" asp-action="Logout" > Logout </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="onhover-div mobile-setting">
+                                                <div class="d-md-block d-none">
+                                                    <img src="~/assets/images/icon/setting.png" alt="" class="img-fluid">
+                                                    <i class="ti-settings"></i>
+                                                </div>
+                                                <div class="show-div setting">
+                                                    <h6>language</h6>
+                                                    <ul>
+                                                        <li><a>English</a></li>
+                                                        <li><a>Hindi</a></li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                            <li class="onhover-div mobile-setting d-md-none d-block wishlist"
+                                                tabindex="0">
+                                                <div>
+                                                    <img src="~/assets/images/icon/setting.png" alt="" class="img-fluid">
+                                                    <i class="fa fa-heart"><a href="@Url.Action("Index","Wishlist")" >Wishlist</a></i>
+                                                </div>
+                                            </li>
+                                            <li class="onhover-div mobile-cart">
+                                                <a data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                                                    aria-controls="offcanvasRight" class="position-relative">
+                                                    <img src="~/assets/images/icon/cart.png" alt="" class="img-fluid">
+                                                    <i class="ti-shopping-cart"></i>
+                                                    @if(hasItemsInCartList)
+                                                    {
+                                                    <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                     @countOfCartItems
+                                                    </span>
+                                                    }
+                                                </a>
+                                                @if (!hasItemsInCartList)
+                                                {
+                                                    <div class="show-div setting">
+                                                        <h6>Cart is Empty!</h6>
+                                                    </div>
+                                                }
+                                            </li>
+                                        </ul>
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div> <!-- main-menu -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div style="height: 147px;"></div>
+
+    @RenderBody()
+
+    <footer class="footer-light">
+        <section class="section-b-space light-layout">
+            <div class="container">
+                <div class="row footer-theme partition-f">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-title footer-mobile-title">
+                            <h4>about</h4>
+                        </div>
+                        <div class="footer-contant">
+                            <div class="footer-logo">
+                                <img src="~/assets/images/icon//logo.png"
+                                    alt="Sahosoft Mall">
+                            </div>
+
+                                <p>Sahosoft Mall is the best place for shopping in the world</p>
+                                <div class="footer-social">
+                                    <ul>
+                                        <li><a><i aria-hidden="true" class="fa fa-facebook"></i></a></li>
+                                        <li><a><i aria-hidden="true" class="fa fa-google-plus"></i></a></li>
+                                        <li><a><i aria-hidden="true" class="fa fa-twitter"></i></a></li>
+                                        <li><a><i aria-hidden="true" class="fa fa-instagram"></i></a></li>
+                                        <li><a><i aria-hidden="true" class="fa fa-rss"></i></a></li>
+                                    </ul>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col offset-xl-1">
+                        <div class="sub-title">
+                                <div class="footer-title">
+                                    <h4>Categories</h4>
+                                </div>
+                                <div class="footer-contant">
+                                    <ul>
+                                        <li><a href="collection-men.html">Womens Fashion</a></li>
+                                        <li><a href="collection-women.html">Mens Fashion</a></li>
+                                    </ul>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="sub-title">
+                                <div class="footer-title">
+                                    <h4>why we choose</h4>
+                                </div>
+                                <div class="footer-contant">
+                                    <ul>
+                                        <li><a>shipping &amp; return</a></li>
+                                        <li><a>secure shopping</a></li>
+                                        <li><a>contacts</a></li>
+                                    </ul>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="sub-title">
+                            <div class="footer-title">
+                                <h4>store information</h4>
+                            </div>
+                            <div class="footer-contant">
+                                <ul class="contact-list">
+                                    <li><i class="fa fa-map-marker"></i>Sahosoft Mall India 256-896</li>
+                                    <li><i class="fa fa-phone"></i>Call Us: 8376817046</li>
+                                    <li><i class="fa fa-envelopeo"></i>Email Us: <a>Support@SahosoftMall.com</a>
+                                    </li>
+                                    <li><i class="fa fa-fax"></i>Fax: 123456</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="sub-footer">
+            <div class="container">
+                    <div class="row">
+                        <div class="col-xl-6 col-md-6 col-sm-12">
+                            <div class="footer-end">
+                                <p><i aria-hidden="true" class="fa fa-copyright"></i>@DateTime.Now.Year Sahosoft Mall powred by
+                                    Sahosoft services Pvt. Ltd</p>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-md-6 col-sm-12">
+                            <div class="payment-card-bottom">
+                                <ul>
+                                    <li><a><img src="~/assets/images/icon/visa.png" alt=""></a></li>
+                                    <li><a><img src="~/assets/images/icon/mastercard.png" alt=""></a></li>
+                                    <li><a><img src="~/assets/images/icon/paypal.png" alt=""></a></li>
+                                    <li><a><img src="~/assets/images/icon/american-express.png" alt=""></a></li>
+                                    <li><a><img src="~/assets/images/icon/discover.png" alt=""></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="tap-top top-cls" style="display: block;">
+        <div>
+            <i class="fa fa-angle-double-up"></i>
+        </div>
+    </div>
+
+    <!-- Offconvas cart items -->
+
+    @if(hasItemsInCartList)
+    {
+        <div class="offcanvas offcanvas-end " tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel"
+             style="width: 350px;">
+            <div class="offcanvas-header bg-dark text-white">
+                <h5 id="offcanvasRightLabel" class="text-white">Cart</h5>
+                <button type="button" data-bs-dismiss="offcanvas" aria-label="Close"
+                        class="btn-close btn-close-white"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="d-flex flex-column flex-shrink-0 bg-light" style="height: 100%;">
+                    <div id="parent">
+                        <div id="child">
+                            <ul class="list-group list-group-flush nav nav-pills flex-column mb-auto">
+                            @foreach (var items in cartList)
+                            {
+                                <li class="cart-item list-group-item py-4 ng-star-inserted" data-price="@items.SalePrice">
+                                    <div class="row">
+                                        <div class="col-md-4 col-4 align-self-center">
+                                            <img alt="..." class="img-fluid"
+                                                 src="@($"{@imageBasePath}{@items.Pictures}")">
+                                        </div>
+                                        <div class="col-md-7 col-7">
+                                            <div class="card-body">
+                                                <div class="col-md-11">
+                                                    <div class="mb-3">
+                                                        <a href="@Url.Action("ProductDetails", "Product", new { category = items.Category, id = items.Id })">
+                                                            <h6 class="text-black mb-2 text-muted">
+                                                                @items.Name
+                                                            </h6>
+                                                        </a>
+                                                        <div>
+                                                            <h6 class="mb-0">₹@items.SalePrice</h6>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex">
+                                                            <button class="btn px-2 qty-btn" data-id="@items.Id" data-action="decrease">
+                                                            <i aria-hidden="true" class="fa fa-minus"></i>
+                                                        </button>
+                                                            <input type="number" class="form-control text-center qty-input" data-id="@items.Id" style="width:60px" value="@items.Quantity" min="1"  >
+                                                            <button class="btn px-2 qty-btn" data-id="@items.Id" data-action="increase" >
+                                                            <i aria-hidden="true" class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1 col-1 text-end align-self-start">
+                                               @*  <a disabled="" aria-label="Close" class="btn-close" href="@Url.Action("RemoveFromCart", "Cart", new { productId = items.Id })"></a> *@
+
+                                                <button type="button" class="btn-close remove-cart" data-id="@items.Id" aria-label="Close"></button>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                            <!---->
+                            </ul>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="dropdown">
+                        <div>
+                            <div class="mb-4 offset-lg-1">
+                                <h5>Subtotal</h5>
+                                <h5 id="cart-subtotal">₹@subTotal</h5>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <a href="@Url.Action("Index","Cart")" data-bs-dismiss="offcanvas" aria-label="Close"
+                                   class="btn btn-solid" tabindex="0">View Cart</a>
+                            <a href="@Url.Action("Checkout", "Order")" data-bs-dismiss="offcanvas" aria-label="Close"
+                                   class="btn btn-solid">Checkout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+
+    <!-- latest jquery-->
+    <script src="~/assets/js/jquery-3.3.1.min.js"></script>
+
+    <!-- fly cart ui jquery-->
+    <script src="~/assets/js/jquery-ui.min.js"></script>
+
+    <!-- exitintent jquery-->
+    <script src="~/assets/js/jquery.exitintent.js"></script>
+    <script src="~/assets/js/exit.js"></script>
+
+    <!-- slick js-->
+    <script src="~/assets/js/slick.js"></script>
+
+    <!-- menu js-->
+    <script src="~/assets/js/menu.js"></script>
+
+    <!-- lazyload js-->
+    <script src="~/assets/js/lazysizes.min.js"></script>
+
+    <!-- Bootstrap js-->
+    <!-- <script src="~/assets/js/bootstrap.bundle.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <!-- Bootstrap Notification js-->
+    <script src="~/assets/js/bootstrap-notify.min.js"></script>
+
+    <!-- Fly cart js-->
+    <script src="~/assets/js/fly-cart.js"></script>
+
+
+    <!-- Theme js-->
+    <script src="~/assets/js/theme-setting.js"></script>
+    <script src="~/assets/js/script.js"></script>
+
+  
+    @* sweet alert  *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @* Toastr JS *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            @if (TempData["SweetSuccess"] != null)
+            {
+                    <text>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: '@TempData["SweetSuccess"]',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    </text>
+            }
+
+            @if (TempData["SweetError"] != null)
+            {
+                    <text>
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: '@TempData["SweetError"]',
+                            confirmButtonColor: '#d33'
+                        });
+                    </text>
+            }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+              toastr.options = {
+                "positionClass": "toast-bottom-right", // or 'toast-bottom-left', etc.
+               };
+            @if (TempData["ToastSuccess"] != null)
+            {
+                    <text>toastr.success("@TempData["ToastSuccess"]");</text>
+            }
+            @if (TempData["ToastError"] != null)
+            {
+                    <text>toastr.error("@TempData["ToastError"]");</text>
+            }
+            @if (TempData["ToastWarning"] != null)
+            {
+                    <text>toastr.warning("@TempData["ToastWarning"]");</text>
+            }
+            @if (TempData["ToastInfo"] != null)
+            {
+                    <text>toastr.info("@TempData["ToastInfo"]");</text>
+            }
+        });
+    </script>
+   
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            @* // 🔁 Update quantity on server *@
+            function updateQuantity(id, quantity) {
+                fetch('/home/cart/updatequantity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: parseInt(id), quantity: parseInt(quantity) })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        console.log("Quantity updated.");
+                    }
+                });
+            }
+
+            @* // 🧮 Recalculate subtotal *@
+            function recalculateSubtotal() {
+                let subtotal = 0;
+                document.querySelectorAll(".cart-item").forEach(item => {
+                    const price = parseFloat(item.dataset.price);
+                    const qtyInput = item.querySelector(".qty-input");
+                    const quantity = parseInt(qtyInput?.value) || 1;
+                    subtotal += price * quantity;
+                });
+
+                const subtotalEl = document.getElementById("cart-subtotal");
+                if (subtotalEl) {
+                    subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
+                }
+            }
+
+            @* // ➕➖ Quantity button click *@
+            document.querySelectorAll(".qty-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    const id = this.dataset.id;
+                    const action = this.dataset.action;
+                    const input = document.querySelector(`.qty-input[data-id='${id}']`);
+
+                    let currentQty = parseInt(input.value);
+                    if (isNaN(currentQty)) currentQty = 1;
+
+                    if (action === "increase") {
+                        currentQty += 1;
+                    } else if (action === "decrease" && currentQty > 1) {
+                        currentQty -= 1;
+                    }
+
+                    input.value = currentQty;
+                    updateQuantity(id, currentQty);
+                    recalculateSubtotal();
+                });
+            });
+
+            @* // 📝 Manual quantity input change *@
+            document.querySelectorAll(".qty-input").forEach(input => {
+                input.addEventListener("change", function () {
+                    const id = this.dataset.id;
+                    let qty = parseInt(this.value);
+                    if (!qty || qty < 1) {
+                        qty = 1;
+                        this.value = 1;
+                    }
+                    updateQuantity(id, qty);
+                    recalculateSubtotal();
+                });
+            });
+
+            @* // ❌ Remove cart item *@
+            document.querySelectorAll(".remove-cart").forEach(button => {
+                button.addEventListener("click", function () {
+
+                    const id = this.dataset.id;
+                    const itemElement = this.closest("li");
+
+                    fetch('/home/cart/removecartitems', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ id: parseInt(id) })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            itemElement.remove();
+                            recalculateSubtotal();
+
+                            const cartCount = document.getElementById("cart-count");
+                            if (data.count > 0) {
+                                if (cartCount) cartCount.textContent = data.count;
+                            } else {
+                                if (cartCount) cartCount.remove();
+                                location.reload();
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+
+    @await RenderSectionAsync("Scripts", required: false);
+
+
+</body>
+
+</html>

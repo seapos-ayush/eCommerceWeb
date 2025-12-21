@@ -1,0 +1,143 @@
+﻿@using eCommerceWeb.Models.Response
+@model List<CustomerOrderDetails_Response>
+@{
+    ViewData["Title"] = "Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var user =  ViewBag.userDetailsSession as LoginResponse;
+
+    var filteredOrders = Model.Where(x => x.OrderStatusId != 4).ToList();
+    var total = filteredOrders.Sum(x => x.Amount);
+}
+<!-- invoice start -->
+
+@if (Model.Any())
+{
+    <section class="theme-invoice-4 section-b-space">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 m-auto">
+                    <div class="invoice-wrapper">
+                        <div class="invoice-header">
+                            <img src="~/assets/images/bg3.jpg" class="background-invoice">
+                            <img src="~/assets/images/icon/logo.png" class="img-fluid" alt="logo">
+                        </div>
+                        <div class="invoice-body">
+                            <div class="top-sec">
+                                <div class="row">
+                                    <div class="col-xxl-8 col-md-7">
+                                        <div class="address-detail">
+                                            <div class="mt-2">
+                                                <h4 class="mb-2">
+                                                    @filteredOrders[0].Address
+                                                </h4>
+                                                <h4 class="mb-2"> @filteredOrders[0].City, @filteredOrders[0].State</h4>
+                                                <h4 class="mb-0">@filteredOrders[0].Country, @filteredOrders[0].PostalCode</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xxl-4 col-md-5">
+                                        <ul class="date-detail">
+                                            <li>
+                                                <span>issue date :</span>
+                                                <h4>@filteredOrders[0].OrderDate</h4>
+                                            </li>
+                                            <li>
+                                                <span>invoice no :</span>
+                                                <h4>@filteredOrders[0].OrderId</h4>
+                                            </li>
+                                            <li>
+                                                <span>email :</span>
+                                                <h4>@user.Email</h4>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="title-sec">
+                                <h2 class="title">invoice</h2>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <a href="#" class="btn black-btn btn-solid" onclick="window.print();">
+                                            export as
+                                            PDF
+                                        </a>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <a href="#" class="btn btn-solid" onclick="window.print();">print</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-sec">
+                                <div class="table-responsive-md">
+                                    <table class="table table-borderless table-striped mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">description</th>
+                                                <th scope="col">price</th>
+                                                <th scope="col">hrs.</th>
+                                                <th scope="col">total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (var i=0; i < filteredOrders.Count; i++)
+                                            {
+                                                var item = filteredOrders[i];
+                                                <tr>
+                                                    <th scope="row">@(i + 1)</th>
+                                                    <td>@item.ProductName</td>
+                                                    <td>₹@item.Amount.ToString("N2")</td>
+                                                    <td>1</td>
+                                                    <td>₹@(item.Amount.ToString("N2"))</td>
+                                                </tr>
+                                            }
+                                         
+                                        
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="text-end">
+                                    <div class="table-footer">
+                                        <span class="me-5 font-bold">Grand Total</span>
+                                        <span class="font-bold">₹@total</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invoice-footer">
+                            <img src="~/assets/images/invoice/shape.png" class="img-fluid design-shape" alt="">
+                            <ul>
+                                <li>
+                                    <i class="fa fa-map" aria-hidden="true"></i>
+                                    <div>
+                                        <h4>Sahosoft Mall</h4>
+                                        <h4>Noida, 16</h4>
+                                    </div>
+                                </li>
+                                <li>
+                                    <i class="fa fa-phone" aria-hidden="true"></i>
+                                    <div>
+                                        <h4>+91 858880573</h4>
+                                        <h4>+1-202-555-0117</h4>
+                                    </div>
+                                </li>
+                                <li>
+                                    <i class="fa fa-envelope" aria-hidden="true"></i>
+                                    <div>
+                                        <h4>class@sahosoft.com</h4>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+}
+
+
+<!-- invoice end -->
+

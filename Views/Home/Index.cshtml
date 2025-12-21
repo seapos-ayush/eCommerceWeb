@@ -1,0 +1,227 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    var BrandLogo = ViewBag.BrandList as IEnumerable<dynamic>;
+    var BestSeller = ViewBag.bestSellerData as IEnumerable<ProductViewModel>;
+    var NewProducts = ViewBag.newProductsData as IEnumerable<ProductViewModel>;
+    var ImageBasePath = "https://sahosoftweb.com/Images/Ecomm/";
+
+
+    //Added New
+    var categoriesFromViewBag = ViewBag.categories as IEnumerable<CategoryItemsResponse>;
+    var hasViewBagCategories = categoriesFromViewBag != null && categoriesFromViewBag.Any();
+    var banners = ViewBag.HomeBanners as dynamic[] ?? new dynamic[0];
+   var ProductStatus = ViewBag.ProductStatus;
+}
+
+<!-- Home slider -->
+<section class="p-0">
+    <div class="slide-1 home-slider">
+        @if (banners.Length > 0)
+        {
+            @foreach (dynamic banner in banners)
+            {
+                <div>
+                    <div class="home text-center">
+                        <img src="~/@(banner.ImagePath)" alt="@banner.Title" class="bg-img blur-up lazyload" />
+                        <div class="container">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="slider-contain">
+                                        <div>
+                                            <h4>@banner.Subtitle</h4>
+                                            <h1>@banner.Title</h1>
+                                            <a href="@banner.TargetUrl"
+                                               class="btn btn-solid">shop now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</section>
+<!-- Home slider end -->
+@* //Task :  Create Category Service and link here *@
+<section class="pb-0">
+    <div class="container">
+        <div class="row partition2">
+            @if (hasViewBagCategories)
+            {
+                @foreach (var cat in categoriesFromViewBag)
+                {
+                    <div class="col-md-6 mb-3 ">
+                        <a href="@Url.Action("Collection", "Product", new { category = cat.Name, categoryId = cat.Id })">
+                            <div class="collection-banner p-right text-center rounded-0" style="box-shadow: none;">
+                                <img alt="category image" class="img-fluid"
+                                     src="@(ImageBasePath + cat.ImagePath)">
+                                <div class="contain-banner">
+                                    <div>
+                                        <h4>Save @cat.IsSave %</h4>
+                                        <h2>@cat.Name</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-md-6 mb-3 ">
+                    <a href="@Url.Action("Collection", "Product", new { category = "men", categoryId = 1 })">
+                        <div class="collection-banner p-right text-center rounded-0" style="box-shadow: none;">
+                            <img alt="category image" class="img-fluid"
+                                 src="https://www.sahosoftweb.com/Images/Ecomm/Category-1.jpg">
+                            <div class="contain-banner">
+                                <div>
+                                    <h4>Save 20 %</h4>
+                                    <h2>men</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6 mb-3 ">
+                    <a href="@Url.Action("Collection", "Product", new { category = "women", categoryId = 2 })">
+                        <div class="collection-banner p-right text-center rounded-0" style="box-shadow: none;">
+                            <img alt="category image" class="img-fluid"
+                                 src="https://www.sahosoftweb.com/Images/Ecomm/category-2.jpg">
+                            <div class="contain-banner">
+                                <div>
+                                    <h4>Save 30 %</h4>
+                                    <h2>Women</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            }
+            <!---->
+        </div>
+    </div>
+</section>
+<div class="title1 section-t-space">
+    <h4>special offer</h4>
+    <h2 class="title-inner1"></h2>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+            <div class="product-para">
+                <p class="text-center">Top Collection by sahosoft mall</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product slider -->
+<section class="section-b-space pt-0 ratio_asos">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="product-4 product-m no-arrow">
+                    @await Html.PartialAsync("_ProductSlider", ViewData["TopCollection"])
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Product slider end -->
+
+<section class="p-0">
+    <div class="full-banner parallax-banner1 parallax text-center p-left"
+         style="background-image: url('assets/images/parallax/1.jpg');">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="banner-contain">
+                        <h2>2025</h2>
+                        <h3>fashion trends</h3>
+                        <h4>special offer</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="title1 section-t-space">
+    <h4>exclusive products</h4>
+    <h2 class="title-inner1">special products</h2>
+</div>
+
+
+<section class="section-b-space pt-0 ratio_asos">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="theme-tab">
+                    <ul class="tabs tab-title">
+                        @if (ProductStatus != null && ProductStatus.Count > 0)
+                        {
+                            var index = 0;
+                            foreach (var status in ProductStatus)
+                            {
+                                if (index == 1 || index == 2)
+                                {
+                                    <li class="@(index == 1 ? "current" : "")">
+                                        <a href="tab-@(index)"> @status.Name</a>
+                                    </li>
+                                }
+
+                                index++;
+                            }
+                        }
+                        else
+                        {
+                            <li class="current"><a href="tab-1">Best Seller</a></li>
+                            <li class=""><a href="tab-2">New Products</a></li>
+                        }
+                    </ul>
+                    <div class="tab-content-cls">
+                        <div id="tab-1" class="tab-content active default">
+                            <div class="row margin-res">
+                                @await Html.PartialAsync("_FetchProducts", BestSeller)
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-content">
+                            <div class="row margin-res">
+                                @await Html.PartialAsync("_FetchProducts", NewProducts)
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if(BrandLogo != null && BrandLogo.Any())
+{
+    <section class="section-b-space pt-0 ratio_asos">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="slide-6-product  product-m no-arrow">
+                        @foreach(var brand in BrandLogo)
+                        {
+                            <div>
+                                <div style="width: 100%; display: inline-block;">
+                                    <div class="logo-block">
+                                        <img src="@($"{@ImageBasePath}{@brand.imagePath}")" alt="@brand.name" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+

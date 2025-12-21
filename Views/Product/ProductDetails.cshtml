@@ -1,0 +1,312 @@
+﻿@{
+    ViewData["Title"] = "Product Details";
+    var ImageBasePath = "https://sahosoftweb.com/Images/Ecomm/";
+}
+
+@model ProductViewModel
+<!-- breadcrumb start -->
+<div class="breadcrumb-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="page-title">
+                    <h2>product</h2>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <nav aria-label="breadcrumb" class="theme-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index","Home")" >Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">product</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- breadcrumb End -->
+<!-- section start -->
+@if(Model != null){
+<section class="section-b-space">
+    <div class="collection-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3 collection-filter">
+                    <div class="collection-filter-block">
+                        <div class="collection-mobile-back">
+                            <span class="filter-back">
+                                <i class="fa fa-angle-left" aria-hidden="true"></i>
+                                back
+                            </span>
+                        </div>
+                        <div class="collection-collapse-block border-0 open">
+                            <h3 class="collapse-block-title">Category</h3>
+                            <div class="collection-collapse-block-content">
+                                <div class="collection-brand-filter">
+                                    <ul class="category-list">
+                                        <li><a href="@Url.Action("collection", "product", new { category = "men", categoryId = 1 })">Men</a></li>
+                                        <li><a href="@Url.Action("collection", "product", new { category = "women", categoryId = 2 })">Women</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- side-bar single product slider start -->
+                    @await Html.PartialAsync("_NewProductSlider")
+                    <!-- side-bar single product slider end -->
+                </div>
+                <div class="col-lg-9 col-sm-12">
+                    <div class="container-fluid p-0">
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="filter-main-btn mb-2">
+                                    <span class="filter-btn">
+                                        <i class="fa fa-filter"
+                                           aria-hidden="true"></i> Sidebar
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="product-slick">
+                                    @if (Model.Pictures != null && Model.Pictures.Any())
+                                    {
+                                        int index = 0;
+                                        foreach (var image in Model.Pictures)
+                                        {
+
+                                            <div>
+                                                <img src="@($"{@ImageBasePath}{image}")" alt="@Model.Name"
+                                                     class="img-fluid blur-up lazyload image_zoom_cls-@index">
+                                            </div>
+                                            index++;
+                                        }
+                                    }
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 p-0">
+                                        <div class="slider-nav">
+                                            @if (Model.Pictures != null && Model.Pictures.Any())
+                                            {
+                                                foreach (var image in Model.Pictures)
+                                                {
+
+                                                    <div>
+                                                        <img src="@($"{@ImageBasePath}{image}")" alt="@Model.Name"
+                                                             class="img-fluid blur-up lazyload">
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 rtl-text">
+                                <div class="product-right">
+                                    <h2> @Model.Name </h2>
+                                    <h3> ₹@Model.SalePrice</h3>
+                                    <div class="product-description border-product">
+                                        <div class="size-box">
+                                            <ul>
+                                                @if (Model.Size != null && Model.Size.Any())
+                                                {
+                                                    foreach (var size in Model.Size)
+                                                    {
+                                                        <li>
+                                                            <a href="javascript:void(0)">@size</a>
+                                                        </li>
+                                                    }
+                                                } else
+                                                {
+                                                    <li>
+                                                        <a href="javascript:void(0)">N/A</a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                        <h5 class="avalibility"><span>@(Model.Stock > 0 ? "In Stock" : "Out of Stock")</span></h5>
+                                        <h6 class="product-title">quantity</h6>
+                                        <div class="qty-box">
+                                            <div class="input-group">
+                                                <span class="input-group-prepend">
+                                                    <button type="button"
+                                                            class="form-control btn quantity-left-minus">
+                                                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                                    </button>
+                                                </span>
+                                                <input type="text" name="quantity" value="1" disabled=""
+                                                       class="form-control input-number">
+                                                <span class="input-group-prepend">
+                                                    <button type="button"
+                                                            class="form-control btn quantity-right-plus border">
+                                                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product-buttons">
+                                            <form asp-action="AddToCart" asp-controller="Cart" method="post" class="d-inline p-0 m-0">
+                                            <input type="hidden" name="Id" value="@Model.Id" />
+                                            <input type="hidden" name="Name" value="@Model.Name" />
+                                            <input type="hidden" name="SalePrice" value="@Model.SalePrice" />
+                                            <input type="hidden" name="Price" value="@Model.Price" />
+                                            <input type="hidden" name="Pictures" value="@Model.Pictures?.FirstOrDefault()" />
+                                            <input type="hidden" name="ShortDetails" value="@Model.ShortDetails" />
+                                            <input type="hidden" name="Stock" value="@Model.Stock" />
+                                            <input type="hidden" name="Colors" value="@Model.Colors" />
+                                            <input type="hidden" name="Size" value="@Model.Size?.FirstOrDefault()" />
+                                            <input type="hidden" name="Category" value="@Model.Category" />
+                                            <button type="submit" class="btn btn-solid">add to cart</button>
+                                        </form>
+                                        <a class="btn btn-solid" href="@Url.Action("Checkout", "Order")">buy now</a>
+                                    </div>
+                                    <div class="border-product">
+                                        <h6 class="product-title">product details</h6>
+                                        <p> @Model.ShortDetails </p>
+                                    </div>
+                                    <div class="border-product">
+                                        <div class="product-icon">
+                                            <form asp-action="AddToWishlist" asp-controller="Wishlist" method="post">
+                                                <input type="hidden" name="Id" value="@Model.Id" />
+                                                <input type="hidden" name="Name" value="@Model.Name" />
+                                                <input type="hidden" name="SalePrice" value="@Model.SalePrice" />
+                                                <input type="hidden" name="Price" value="@Model.Price" />
+                                                <input type="hidden" name="Pictures" value="@Model.Pictures?.FirstOrDefault()" />
+                                                <input type="hidden" name="ShortDetails" value="@Model.ShortDetails" />
+                                                <input type="hidden" name="Stock" value="@Model.Stock" />
+                                                <input type="hidden" name="Colors" value="@Model.Colors" />
+                                                <input type="hidden" name="Size" value="@Model.Size?.FirstOrDefault()" />
+                                                <input type="hidden" name="Category" value="@Model.Category" />
+
+                                                <button type="submit" class="wishlist-btn"> <i class="fa fa-heart" aria-hidden="true"></i> <span class="title-font"> Add To WishList</span></button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <section class="tab-product m-0">
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-12">
+                                <ul class="nav nav-tabs nav-material" id="top-tab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="top-home-tab"
+                                           data-bs-toggle="tab" href="#top-home" role="tab" aria-selected="true">
+                                            <i class="icofont icofont-ui-home"></i>Product Description
+                                        </a>
+                                        <div class="material-border"></div>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="profile-top-tab"
+                                           data-bs-toggle="tab" href="#top-profile" role="tab"
+                                           aria-selected="false">
+                                            <i class="icofont icofont-man-in-glasses"></i>Sort
+                                            Details
+                                        </a>
+                                        <div class="material-border"></div>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="review-top-tab"
+                                           data-bs-toggle="tab" href="#top-review" role="tab"
+                                           aria-selected="false">
+                                            <i class="icofont icofont-contacts"></i>Write
+                                            Review
+                                        </a>
+                                        <div class="material-border"></div>
+                                    </li>
+                                </ul>
+                                <div class="tab-content nav-material" id="top-tabContent">
+                                    <div class="tab-pane fade show active" id="top-home" role="tabpanel"
+                                         aria-labelledby="top-home-tab">
+                                        <div class="product-tab-discription">
+                                            @if (!string.IsNullOrEmpty(Model.Description))
+                                            {
+                                                @Html.Raw(Model.Description)
+                                            }
+                                          else
+                                            {
+                                                <p>No Description Available for this product.</p>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="top-profile" role="tabpanel"
+                                         aria-labelledby="profile-top-tab">
+                                        @if (!string.IsNullOrEmpty(Model.ShortDetails))
+                                        {
+                                            <p> @Model.ShortDetails </p>
+                                        }
+                                        else
+                                        {
+                                            <p>No Short Details Available for this product.</p>
+                                        }
+                                    </div>
+                                    <div class="tab-pane fade" id="top-review" role="tabpanel"
+                                         aria-labelledby="review-top-tab">
+                                        <form class="theme-form">
+                                            <div class="form-row row">
+                                                <div class="col-md-12">
+                                                    <div class="media">
+                                                        <label>Rating</label>
+                                                        <div class="media-body ms-3">
+                                                            <div class="rating three-star">
+                                                                <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="name">Name</label>
+                                                    <input type="text" class="form-control" id="name"
+                                                           placeholder="Enter Your name" required="">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="email">Email</label>
+                                                    <input type="text" class="form-control" id="email"
+                                                           placeholder="Email" required="">
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label for="review">Review Title</label>
+                                                    <input type="text" class="form-control" id="review"
+                                                           placeholder="Enter your Review Subjects" required="">
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label for="review">Review Title</label>
+                                                    <textarea class="form-control"
+                                                              placeholder="Wrire Your Testimonial Here"
+                                                              id="exampleFormControlTextarea1" rows="6"></textarea>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <button class="btn btn-solid" type="submit">
+                                                        Submit YOur
+                                                        Review
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+} else {
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2>Product not found.</h2>
+                <h4><a href="@Url.Action("Index","Home")" >Home</a></h4>
+            </div>
+        </div>
+    </div>
+}
+<!-- Section ends -->
